@@ -10,6 +10,7 @@
    - Checkout form with validation
  */
 
+// KJB: include needed polyfills (since this the top-level js entry point in our app)
 import './util/polyfill'; // first import polyfills
 import httpClient from 'axios';
 
