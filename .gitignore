@@ -13,3 +13,6 @@ build-lib
 
 # emacs backup files
 *~
+
+# for now do NOT publish my distribution
+dist
