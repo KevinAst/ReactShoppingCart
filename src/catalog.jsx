@@ -8,7 +8,8 @@ function Catalog({items}) {
   return (
     <ul className="product catalog">
       { items.map(item => (
-          <ItemRow key={item.id} item={item} /> )) }
+          <ItemRow key={item.id} item={item} /> ))
+      }
     </ul>
   );
 }
