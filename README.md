@@ -10,6 +10,7 @@ and receipt, retrieving data from simulated rest service.
 
 - 185-fetch-data: Fetching data with Axios
 - 190-catalog: Provide a visual catalog of our items for sale.
+- 215-216-testing: Introduction to unit testing using Karma, Mocha, and Expect
 
 
 
