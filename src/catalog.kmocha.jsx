@@ -1,7 +1,6 @@
 'use strict';
 
 import { expect, React, ReactDOM, TestUtils } from './util/karma-setup';
-const { renderIntoDocument, Simulate } = TestUtils; // KJB: NO LIKEY ... for the same reason you qualify ReactDOM (below) I would prefer to qualify TestUtils
 
 import App from './app';                         // KJB: component under test
 const DATA = require('../public/fake-api.json'); // KJB: same fixture data browser sync is serving
@@ -14,7 +13,7 @@ describe('Catalog Tests', function () {
   //      ... because I am generating dynamic tests [i.e. it()] that use this data,
   //      ... which drive the it() characteristics
   //      ... this is possible because our tests do NOT modify the fixture (i.e. it is read-only)
-  let renderedComp    = renderIntoDocument(<App items={DATA.items}/>);
+  let renderedComp    = TestUtils.renderIntoDocument(<App items={DATA.items}/>);
   let renderedDomNode = ReactDOM.findDOMNode(renderedComp);
   let renderedLiNodes = renderedDomNode.querySelectorAll('.catalog li');
 
@@ -63,5 +62,29 @@ describe('Catalog Tests', function () {
 
       });
     }
+
+    // dynamic interaction showing detail in modal
+    // ... first item only (foo) ... kinda a brittle test
+    describe("Clicking image from catalog", function() {
+
+      let fooImg = null;
+      
+      beforeEach(function() {
+        fooImg = renderedDomNode.querySelector("li[data-id='1'] img.product");
+      });
+    
+      it("should show details for foo (when clicked)", function() {
+        TestUtils.Simulate.click(fooImg); // first click should show
+        const details = renderedDomNode.querySelector(".details[data-id='1']");
+        expect(details).toExist();
+      });
+
+      it("should hide details when foo clicked twice", function() {
+        TestUtils.Simulate.click(fooImg); // second click should hide
+        const details = renderedDomNode.querySelector(".details[data-id='1']");
+        expect(details).toNotExist();
+      });
+    });
+
   });
 });
