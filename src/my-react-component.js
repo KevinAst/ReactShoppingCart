@@ -14,14 +14,7 @@ class MyReactComponent extends React.Component {
     // NOTE: current logic only locates methods of the concrete class
     //       ... to support a multi-level class hierarchy, we must walk the prototype chain
     const myPropNames = Object.getOwnPropertyNames( Object.getPrototypeOf(this) );
-
-    // ??? hmmm ... why can't PhantomJS (in my test environment) cannot hangle this for construct
-    //              PhantomJS 1.9.8 (Windows 7 0.0.0) ERROR
-    //                ReferenceError: Can't find variable: Symbol
-//? for (const propName of myPropNames) {
-    for (let i=0; i<myPropNames.length; i++) {
-      const propName = myPropNames[i];
-      
+    for (const propName of myPropNames) {
       const value = this[propName];
       if (typeof value === "function" && propName !== "constructor") {
         //console.log("MyReactComponent: autobinding " + propName + "() method to self.");
