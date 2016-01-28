@@ -52,13 +52,14 @@ describe('Catalog Tests', function () {
           expect(priceElm.textContent).toEqual(expectedPrice);
         });
 
-        // Verify Descriptions
-        const expectedDesc = item.desc;
-        it(`description[${i}]: ${expectedDesc}`, function() {
-          const descElm = li.querySelector(".desc");
-          expect(descElm).toExist();
-          expect(descElm.textContent).toEqual(expectedDesc);
-        });
+        // NO LONGER DISPLAYED (in our in-line version)
+        // // Verify Descriptions
+        // const expectedDesc = item.desc;
+        // it(`description[${i}]: ${expectedDesc}`, function() {
+        //   const descElm = li.querySelector(".desc");
+        //   expect(descElm).toExist();
+        //   expect(descElm.textContent).toEqual(expectedDesc);
+        // });
 
       });
     }
@@ -66,7 +67,7 @@ describe('Catalog Tests', function () {
     // dynamic interaction showing detail in modal
     // ... first item only (foo) ... kinda a brittle test
     describe("Clicking image from catalog", function() {
-
+    
       let fooImg = null;
       
       beforeEach(function() {
@@ -78,7 +79,7 @@ describe('Catalog Tests', function () {
         const details = renderedDomNode.querySelector(".details[data-id='1']");
         expect(details).toExist();
       });
-
+    
       it("should hide details when foo clicked twice", function() {
         TestUtils.Simulate.click(fooImg); // second click should hide
         const details = renderedDomNode.querySelector(".details[data-id='1']");

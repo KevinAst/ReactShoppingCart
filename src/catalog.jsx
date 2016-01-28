@@ -3,13 +3,13 @@
 import React from 'react';
 import ItemRow from './item-row';
 
-//Stateless function components React.js 0.14+
-function Catalog({items, itemClickFn}) {
+function Catalog({items, itemExpanded, itemClickFn}) {
   return (
     <ul className="product catalog">
       { items.map(item => (
           <ItemRow key={item.id}
                    item={item}
+                   itemExpanded={itemExpanded}
                    clickFn={() => itemClickFn(item)}/> ))
       }
     </ul>
