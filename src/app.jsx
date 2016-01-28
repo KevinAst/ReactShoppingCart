@@ -16,7 +16,6 @@ class App extends MyReactComponent {
 
     this.state = {
       itemExpanded: null  // item to expand
-      //itemExpanded: this.props.items[0] // ??? TEMP FOR NOW
     };
   }
 
