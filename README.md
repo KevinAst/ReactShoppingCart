@@ -13,6 +13,7 @@ and receipt, retrieving data from simulated rest service.
 - 215-216-testing: Introduction to unit testing using Karma, Mocha, and Expect
 - 220-item-details: Added support for "show item details" in our app
 - 226-inline-detail: Display details inline
+- 230-catalog-filter - Provide a category filter in our Catalog display
 
 
 ## Jeff's Notes:

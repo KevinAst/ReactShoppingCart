@@ -88,4 +88,37 @@ describe('Catalog Tests', function () {
     });
 
   });
+
+
+  describe('Check filtered items', function() {
+
+    // dynamically generate a series of tests for each item
+    for (const testSelector of ["React.js", "Nature", ""]) {
+
+      describe(`select category '${testSelector}'`, function () {
+
+        beforeEach(function () {
+          const select = renderedDomNode.querySelector('select.category');
+          TestUtils.Simulate.change(select, { target: { value: 'Nature' }});     // initially select anything
+          TestUtils.Simulate.change(select, { target: { value: testSelector }}); // now select the desired item
+        });
+
+        it(`should display '${testSelector}' items`, function () {
+          const listItems = renderedDomNode.querySelectorAll('.catalog li');
+          expect(listItems.length).toBe(filterData(testSelector).length);
+        });
+
+        function filterData(selector) {
+          return selector 
+               ? DATA.items.filter(x => x.category===selector)
+            : DATA.items;
+        }
+
+      });
+
+    }
+
+  });
+
+
 });

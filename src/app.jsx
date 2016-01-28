@@ -8,27 +8,40 @@ import React            from 'react';
 import Catalog          from './catalog';
 import MyReactComponent from './my-react-component';
 
+const CATEGORIES = ['Nature', 'React.js']; // filter categories to select from
+
 class App extends MyReactComponent {
 
   constructor(...args) {
     super(...args);
 
     this.state = {
+      category:     null, // filter category <String>
       itemExpanded: null  // item to expand
     };
   }
 
   render() {
-    const { items }        = this.props;
-    const { itemExpanded } = this.state;
+    const { items } = this.props;
+    const { itemExpanded, category } = this.state;
 
+    const filtItems = category ?
+                      items.filter(x => x.category === category) :
+                      items;
     return (
       <div>
-        <Catalog items={items}
+        <Catalog items={filtItems}
                  itemExpanded={itemExpanded}
+                 categories={CATEGORIES}
+                 catChangeFn={this.catChange}
                  itemClickFn={this.displayDetailToggle}/>
       </div>
     );
+  }
+
+  catChange(e) {
+    const cat = e.target.value || null;
+    this.setState({ category: cat });
   }
 
   displayDetailToggle(item) {
