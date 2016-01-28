@@ -1,24 +1,33 @@
 'use strict';
 
+import React           from 'react';
 import { formatMoney } from 'accounting';
-// KJB TEMP (till accounting pkg installed): function formatMoney(i) { return i; }
-import React from 'react';
+import ItemDetails     from './item-details';
 
-function ItemRow({item, clickFn }) {
+function ItemRow({item, itemExpanded, clickFn }) {
   return (
-    <li data-id={item.id} onClick={clickFn}>  {/* KJB: data-id for testing */}
+    <li data-id={item.id} onClick={clickFn}>
       <img src={item.img} className="product"/>
       <div className="summary">
         <div className="name">
           { item.name }
         </div>
-        <div className="pricing">
-          <span className="price">{ formatMoney(item.price) }</span>
-        </div>
-        <div className="desc">
-          { item.desc }
-        </div>
-        <span><button>Details</button></span>
+        { item === itemExpanded
+          ? <span>
+              <button>
+                Collapse Details
+              </button>
+              <ItemDetails item={itemExpanded}/>
+            </span>
+          : <span>
+              <div className="pricing">
+                <span className="price">{ formatMoney(item.price) }</span>
+              </div>
+              <button>
+                Expand Details
+              </button>
+            </span>
+        }
       </div>
     </li>
   );

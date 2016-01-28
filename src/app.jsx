@@ -1,12 +1,11 @@
 'use strict';
 
 /*
-  This will contain the top React.js app component
+  This provides the top React.js app component.
  */
 
 import React            from 'react';
 import Catalog          from './catalog';
-import ItemDetails      from './item-details';
 import MyReactComponent from './my-react-component';
 
 class App extends MyReactComponent {
@@ -20,40 +19,26 @@ class App extends MyReactComponent {
   }
 
   render() {
-
     const { items }        = this.props;
     const { itemExpanded } = this.state;
 
-    console.log("KJB: in App.render()");
     return (
       <div>
-        { itemExpanded && this.details() }
         <Catalog items={items}
+                 itemExpanded={itemExpanded}
                  itemClickFn={this.displayDetailToggle}/>
       </div>
-    );
-  }
-
-  details() {
-    const { itemExpanded } = this.state;
-    return (
-      <ItemDetails item={itemExpanded}
-                   closeFn={this.closeDetail} />
     );
   }
 
   displayDetailToggle(item) {
     const {itemExpanded} = this.state;
     if (itemExpanded && itemExpanded.id === item.id) { // toggle off already selected
-      this.closeDetail();
+      this.setState({itemExpanded: null}); // close detail
     }
     else {
-      this.setState({itemExpanded: item});
+      this.setState({itemExpanded: item}); // expand detail
     }
-  }
-
-  closeDetail() {
-    this.setState({itemExpanded: null});
   }
 
 }
