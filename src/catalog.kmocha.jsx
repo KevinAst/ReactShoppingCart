@@ -90,29 +90,34 @@ describe('Catalog Tests', function () {
   });
 
 
-  describe('Check filtered items', function() {
+  describe('checking filtered items display', function() {
 
-    // dynamically generate a series of tests for each item
-    for (const testSelector of ["React.js", "Nature", ""]) {
+    // dynamically generate a series of tests for each category
+    for (const testCategory of [...App.CATEGORIES, ""]) {
 
-      describe(`select category '${testSelector}'`, function () {
+      describe(`select category '${testCategory}'`, function () {
+
+        let expectedFilteredItems = null;
 
         beforeEach(function () {
-          const select = renderedDomNode.querySelector('select.category');
-          TestUtils.Simulate.change(select, { target: { value: 'Nature' }});     // initially select anything
-          TestUtils.Simulate.change(select, { target: { value: testSelector }}); // now select the desired item
+          // apply the desired filter to produce our expected items
+          expectedFilteredItems = testCategory ?
+                                    DATA.items.filter(x => x.category === testCategory) :
+                                    DATA.items;
+
+          // select the desired filter within our GUI
+          const selectDom = renderedDomNode.querySelector('select.category');
+          // ... initially select anything (just for fun)
+          TestUtils.Simulate.change(selectDom, { target: { value: App.CATEGORIES[0] }});
+          // ... now select the desired item
+          TestUtils.Simulate.change(selectDom, { target: { value: testCategory }});
         });
 
-        it(`should display '${testSelector}' items`, function () {
-          const listItems = renderedDomNode.querySelectorAll('.catalog li');
-          expect(listItems.length).toBe(filterData(testSelector).length);
+        // apply our test
+        it(`should display '${testCategory}' items`, function () {
+          const actualFilteredItems = renderedDomNode.querySelectorAll('.catalog li');
+          expect(actualFilteredItems.length).toBe(expectedFilteredItems.length);
         });
-
-        function filterData(selector) {
-          return selector 
-               ? DATA.items.filter(x => x.category===selector)
-            : DATA.items;
-        }
 
       });
 
