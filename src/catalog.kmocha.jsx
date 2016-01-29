@@ -88,4 +88,42 @@ describe('Catalog Tests', function () {
     });
 
   });
+
+
+  describe('checking filtered items display', function() {
+
+    // dynamically generate a series of tests for each category
+    for (const testCategory of [...App.CATEGORIES, ""]) {
+
+      describe(`select category '${testCategory}'`, function () {
+
+        let expectedFilteredItems = null;
+
+        beforeEach(function () {
+          // apply the desired filter to produce our expected items
+          expectedFilteredItems = testCategory ?
+                                    DATA.items.filter(x => x.category === testCategory) :
+                                    DATA.items;
+
+          // select the desired filter within our GUI
+          const selectDom = renderedDomNode.querySelector('select.category');
+          // ... initially select anything (just for fun)
+          TestUtils.Simulate.change(selectDom, { target: { value: App.CATEGORIES[0] }});
+          // ... now select the desired item
+          TestUtils.Simulate.change(selectDom, { target: { value: testCategory }});
+        });
+
+        // apply our test
+        it(`should display '${testCategory}' items`, function () {
+          const actualFilteredItems = renderedDomNode.querySelectorAll('.catalog li');
+          expect(actualFilteredItems.length).toBe(expectedFilteredItems.length);
+        });
+
+      });
+
+    }
+
+  });
+
+
 });

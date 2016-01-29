@@ -3,16 +3,28 @@
 import React from 'react';
 import ItemRow from './item-row';
 
-function Catalog({items, itemExpanded, itemClickFn}) {
+function Catalog({items, itemExpanded, categories, catChangeFn, itemClickFn}) {
   return (
-    <ul className="product catalog">
-      { items.map(item => (
-          <ItemRow key={item.id}
-                   item={item}
-                   itemExpanded={itemExpanded}
-                   clickFn={() => itemClickFn(item)}/> ))
-      }
-    </ul>
+    <div>
+      Category:
+      <select onChange={catChangeFn} className="category">
+        <option value="">All</option>
+        { categories.map(c =>
+            <option key={c}
+                    value={c}>
+              {c}
+            </option> )
+        }
+      </select>
+      <ul className="product catalog">
+        { items.map(item => (
+            <ItemRow key={item.id}
+                     item={item}
+                     itemExpanded={itemExpanded}
+                     clickFn={() => itemClickFn(item)}/> ))
+        }
+      </ul>
+    </div>
   );
 }
 

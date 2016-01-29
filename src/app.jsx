@@ -14,21 +14,32 @@ class App extends MyReactComponent {
     super(...args);
 
     this.state = {
+      category:     null, // filter category <String>
       itemExpanded: null  // item to expand
     };
   }
 
   render() {
-    const { items }        = this.props;
-    const { itemExpanded } = this.state;
+    const { items } = this.props;
+    const { itemExpanded, category } = this.state;
 
+    const filteredItems = category ?
+                            items.filter(x => x.category === category) :
+                            items;
     return (
       <div>
-        <Catalog items={items}
+        <Catalog items={filteredItems}
                  itemExpanded={itemExpanded}
+                 categories={App.CATEGORIES}
+                 catChangeFn={this.catChange}
                  itemClickFn={this.displayDetailToggle}/>
       </div>
     );
+  }
+
+  catChange(e) {
+    const cat = e.target.value || null;
+    this.setState({ category: cat });
   }
 
   displayDetailToggle(item) {
@@ -42,5 +53,7 @@ class App extends MyReactComponent {
   }
 
 }
+
+App.CATEGORIES = ['Nature', 'React.js']; // filter categories to select from
 
 export default App;
