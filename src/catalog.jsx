@@ -3,7 +3,7 @@
 import React from 'react';
 import ItemRow from './item-row';
 
-function Catalog({items, itemExpanded, categories, catChangeFn, itemClickFn}) {
+function Catalog({items, itemExpanded, buyFn, categories, catChangeFn, itemClickFn}) {
   return (
     <div>
       Category:
@@ -21,6 +21,7 @@ function Catalog({items, itemExpanded, categories, catChangeFn, itemClickFn}) {
             <ItemRow key={item.id}
                      item={item}
                      itemExpanded={itemExpanded}
+                     buyClickedFn={() => buyFn(item)}
                      clickFn={() => itemClickFn(item)}/> ))
         }
       </ul>
