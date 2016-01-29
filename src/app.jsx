@@ -8,8 +8,6 @@ import React            from 'react';
 import Catalog          from './catalog';
 import MyReactComponent from './my-react-component';
 
-const CATEGORIES = ['Nature', 'React.js']; // filter categories to select from
-
 class App extends MyReactComponent {
 
   constructor(...args) {
@@ -25,14 +23,14 @@ class App extends MyReactComponent {
     const { items } = this.props;
     const { itemExpanded, category } = this.state;
 
-    const filtItems = category ?
-                      items.filter(x => x.category === category) :
-                      items;
+    const filteredItems = category ?
+                            items.filter(x => x.category === category) :
+                            items;
     return (
       <div>
-        <Catalog items={filtItems}
+        <Catalog items={filteredItems}
                  itemExpanded={itemExpanded}
-                 categories={CATEGORIES}
+                 categories={App.CATEGORIES}
                  catChangeFn={this.catChange}
                  itemClickFn={this.displayDetailToggle}/>
       </div>
@@ -55,5 +53,7 @@ class App extends MyReactComponent {
   }
 
 }
+
+App.CATEGORIES = ['Nature', 'React.js']; // filter categories to select from
 
 export default App;
