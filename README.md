@@ -15,6 +15,7 @@ and receipt, retrieving data from simulated rest service.
 - 226-inline-detail: Display details inline
 - 230-catalog-filter: Provide a category filter in our Catalog display
 - 240-catalog-buy-buttons: Provide "buy" button basics
+- 250-checkout: Collect billing info with a form
 
 
 ## Jeff's Notes:

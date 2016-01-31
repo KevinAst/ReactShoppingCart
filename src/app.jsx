@@ -17,8 +17,25 @@ class App extends MyReactComponent {
     this.state = {
       category:     null,  // filter category <String>
       itemExpanded: null,  // item to expand
+
+      // ***
+      // *** state related to buy/checkout
+      // ***
+
+      // ?? original
       checkoutOpen: false, // is the checkout dialog open?
       total:        null,  // currency TODO: KJB should we be passing the item to checkout rather than the total?
+      // ?? temporarly make this open, so our development is easy
+      // ? checkoutOpen: true, // is the checkout dialog open?
+      // ? total:        123,  // currency
+
+      // fields supporting our checkout
+      // NOTE: attr names must match form field names of <Checkout>
+      email:      null, // string
+      creditCard: null, // string
+      expiry:     null, // string
+      fullName:   null, // string
+      cvcode:     null, // string
     };
   }
 
@@ -42,10 +59,21 @@ class App extends MyReactComponent {
     );
   }
 
+
+  // ***
+  // *** filter category related ...
+  // ***
+
   catChange(e) {
     const cat = e.target.value || null;
     this.setState({ category: cat });
   }
+
+
+
+  // ***
+  // *** show detail related ...
+  // ***
 
   displayDetailToggle(item) {
     const {itemExpanded} = this.state;
@@ -58,24 +86,44 @@ class App extends MyReactComponent {
   }
 
 
-
-
   // ***
-  // *** Checkout related ...
+  // *** Buy/Checkout related ...
   // ***
 
   checkout() {
     const { total } = this.state;
+
+    // fields to send to <Checkout> as a simple property object
+    // ... making it simpler to pass to CheckOut
+    const fields = {
+      email:      this.state.email,
+      creditCard: this.state.creditCard,
+      expiry:     this.state.expiry,
+      fullName:   this.state.fullName,
+      cvcode:     this.state.cvcode,
+    };
+
     return (
       <div className="checkoutModal">
         <div className="checkoutContainer">
-          <Checkout total={total}
+          <Checkout fields={fields}
+                    updatedFn={this.checkoutUpdate}
+                    total={total}
                     closeCheckoutFn={this.closeCheckoutClicked} />
         </div>
       </div>
     );
   }
 
+  // ... anytime a buy/checkout field is changed we retain it in our state
+  checkoutUpdate(e) {
+    // KJB: the property we wish to set is the same as the name of
+    //      our input form field (defined in our event as: e.target.name)
+    console.log(`SETTING: '${e.target.name}' TO: '${e.target.value}' `);
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
+  // really just show buy/checkout dialog
   buyItem(item) {
     this.setState({
       checkoutOpen: true,
