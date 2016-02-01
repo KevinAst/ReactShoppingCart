@@ -56,11 +56,6 @@ function Checkout({fields, total, closeCheckoutFn, updatedFn}) {
                      onChange={updatedFn}
                      onBlur={updatedCreditCardFn}
                      placeholder="1234 5678 90123" />
-              {/* ??? 
-              value={fields.creditCard}
-              onChange={updatedFn}
-              onBlur={updatedCreditCardFn}
-              */}
             </label>
             <div className="meta">
               <label>
@@ -85,9 +80,10 @@ function Checkout({fields, total, closeCheckoutFn, updatedFn}) {
                 <input name="cvcode"
                        onChange={updatedFn}
                        placeholder="123" />
-                {/*  ??? we don't retain show any value on because it is sensitive
-                     ... unsure how this works ... seems like it would blank out all the time
-                     ... need to better understand
+                {/*  KJB: we don't retain show any value on because it is sensitive
+                          ... unsure how this works
+                          ... seems like it would blank out all the time
+                          ... need to better understand
                 */}
               </label>
             </div>

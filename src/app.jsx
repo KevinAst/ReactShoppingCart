@@ -19,18 +19,15 @@ class App extends MyReactComponent {
       itemExpanded: null,  // item to expand
 
       // ***
-      // *** state related to buy/checkout
+      // *** state related to checkout
       // ***
 
-      // ?? original
       checkoutOpen: false, // is the checkout dialog open?
-      total:        null,  // currency TODO: KJB should we be passing the item to checkout rather than the total?
-      // ?? temporarly make this open, so our development is easy
-      // ? checkoutOpen: true, // is the checkout dialog open?
-      // ? total:        123,  // currency
+      total:        null,  // currency KJB: unsure yet how this is going to work
 
       // fields supporting our checkout
-      // NOTE: attr names must match form field names of <Checkout>
+      // ... attr names must match <Checkout> form field names
+      // KJB: Can state have depth in it's structure, rather than this flat list of field?
       email:      null, // string
       creditCard: null, // string
       expiry:     null, // string
@@ -48,10 +45,10 @@ class App extends MyReactComponent {
                             items;
     return (
       <div>
-        { checkoutOpen && this.checkout() }
+        { checkoutOpen && this.renderCheckoutDialog() }
         <Catalog items={filteredItems}
                  itemExpanded={itemExpanded}
-                 buyFn={this.buyItem}
+                 buyFn={this.showCheckoutDialog}
                  categories={App.CATEGORIES}
                  catChangeFn={this.catChange}
                  itemClickFn={this.displayDetailToggle}/>
@@ -90,7 +87,7 @@ class App extends MyReactComponent {
   // *** Buy/Checkout related ...
   // ***
 
-  checkout() {
+  renderCheckoutDialog() {
     const { total } = this.state;
 
     // fields to send to <Checkout> as a simple property object
@@ -107,31 +104,29 @@ class App extends MyReactComponent {
       <div className="checkoutModal">
         <div className="checkoutContainer">
           <Checkout fields={fields}
-                    updatedFn={this.checkoutUpdate}
+                    updatedFn={this.updateCheckoutField}
                     total={total}
-                    closeCheckoutFn={this.closeCheckoutClicked} />
+                    closeCheckoutFn={this.closeCheckoutDialog} />
         </div>
       </div>
     );
   }
 
-  // ... anytime a buy/checkout field is changed we retain it in our state
-  checkoutUpdate(e) {
+  updateCheckoutField(e) {
     // KJB: the property we wish to set is the same as the name of
     //      our input form field (defined in our event as: e.target.name)
     console.log(`SETTING: '${e.target.name}' TO: '${e.target.value}' `);
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value }); // KJB: use new ES6 feature: Computed Property Keys in our JSON
   }
 
-  // really just show buy/checkout dialog
-  buyItem(item) {
+  showCheckoutDialog(item) {
     this.setState({
       checkoutOpen: true,
       total:        item.price
     });
   }
 
-  closeCheckoutClicked() {
+  closeCheckoutDialog() {
     this.setState({ checkoutOpen: false });
   }
 
