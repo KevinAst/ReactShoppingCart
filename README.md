@@ -16,6 +16,7 @@ and receipt, retrieving data from simulated rest service.
 - 230-catalog-filter: Provide a category filter in our Catalog display
 - 240-catalog-buy-buttons: Provide "buy" button basics
 - 250-checkout: Collect billing info with a form
+- 260-validate-submit: Provide checkout validation using joi framework
 
 
 ## Jeff's Notes:

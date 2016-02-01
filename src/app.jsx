@@ -28,11 +28,11 @@ class App extends MyReactComponent {
       // fields supporting our checkout
       // ... attr names must match <Checkout> form field names
       // KJB: Can state have depth in it's structure, rather than this flat list of field?
-      email:      null, // string
-      creditCard: null, // string
-      expiry:     null, // string
-      fullName:   null, // string
-      cvcode:     null, // string
+      email:      "", // string
+      creditCard: "", // string
+      expiry:     "", // string
+      fullName:   "", // string
+      cvcode:     "", // string
     };
   }
 
