@@ -13,6 +13,7 @@ describe('Checkout Tests', function () {
   //      ... because I am generating dynamic tests [i.e. it()] that use this data,
   //      ... which drive the it() characteristics
   //      ... this is possible because our tests do NOT modify the fixture (i.e. it is read-only)
+  //      TODO: this has started to be a bit dicy with the advent of entering data (must fill in fields in the right order)
   let renderedComp    = TestUtils.renderIntoDocument(<App items={DATA.items}/>);
   let renderedDomNode = ReactDOM.findDOMNode(renderedComp);
 
@@ -65,9 +66,9 @@ describe('Checkout Tests', function () {
         TestUtils.Simulate.click(renderedDomNode.querySelector('button.pay'));
       });
 
-      it('should show 6 errors', function () {
+      it('should show 9 errors', function () {
         const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-        expect(errorDivs.length).toBe(6);
+        expect(errorDivs.length).toBe(9);
       });
 
       describe('after entering email', function () {
@@ -76,11 +77,27 @@ describe('Checkout Tests', function () {
           TestUtils.Simulate.change(email, { target: { name: 'email', value: 'a@b.com' }});
         });
 
-        it('should have 5 errors', function () {
+        it('should have 8 errors', function () {
           const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-          expect(errorDivs.length).toBe(5);
+          expect(errorDivs.length).toBe(8);
         });
 
+      });
+
+      describe('after entering partial data', function () {
+
+        beforeEach(function () {
+          enterData({
+            email: 'a@b.com',
+            creditCard: '4111111111111111',
+            expiry: '12/20'
+          });
+        });
+
+        it('should have 4 errors', function () {
+          const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
+          expect(errorDivs.length).toBe(4);
+        });
       });
 
       describe('after entering all fields', function () {
@@ -100,23 +117,7 @@ describe('Checkout Tests', function () {
         });
       });
 
-      describe('after entering partial data', function () {
-        beforeEach(function () {
-          enterData({
-            email: 'a@b.com',
-            creditCard: '4111111111111111',
-            expiry: '12/20',
-          });
-        });
-
-        it('should have 2 errors', function () {
-          const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-          expect(errorDivs.length).toBe(2);
-        });
-      });
-
     });
 
   });
-
 });

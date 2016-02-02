@@ -24,6 +24,7 @@ class App extends MyReactComponent {
 
       checkoutOpen: false, // is the checkout dialog open?
       total:        null,  // currency KJB: unsure yet how this is going to work
+      receiptId:    null,
 
       // fields supporting our checkout
       // ... attr names must match <Checkout> form field names
@@ -106,7 +107,8 @@ class App extends MyReactComponent {
           <Checkout fields={fields}
                     updatedFn={this.updateCheckoutField}
                     total={total}
-                    closeCheckoutFn={this.closeCheckoutDialog} />
+                    closeCheckoutFn={this.closeCheckoutDialog}
+                    saleCompletedFn={this.saleCompleted} />
         </div>
       </div>
     );
@@ -127,7 +129,22 @@ class App extends MyReactComponent {
   }
 
   closeCheckoutDialog() {
-    this.setState({ checkoutOpen: false });
+    this.setState({ 
+      checkoutOpen: false,
+      creditCard:   null,      // clear sensitive state
+      cvcode:       null,      // clear sensitive state
+    });
+  }
+
+
+  saleCompleted(receiptId) {
+    this.setState({
+      total:        null,
+      checkoutOpen: false,     // close our buy/checkout dialog
+      receiptId:    receiptId,
+      creditCard:   null,      // clear sensitive state
+      cvcode:       null,      // clear sensitive state
+    });
   }
 
 }
