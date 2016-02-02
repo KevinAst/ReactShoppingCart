@@ -77,8 +77,11 @@
     "accounting": "^0.4.1",
     "axios": "^0.7.0",
     "core-js": "^1.0.0",
+    "joi-browser": "^7.1.0",
+    "moment": "^2.11.1",
     "react": "^0.14.2",
-    "react-dom": "^0.14.2"
+    "react-dom": "^0.14.2",
+    "shortid": "^2.2.4"
   },
   "keywords": []
 }
