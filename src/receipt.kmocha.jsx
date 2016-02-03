@@ -22,7 +22,7 @@ describe('receipt', function () {
   });
 
   function enterData(data) {
-    const fieldNames = ['email', 'creditCard', 'expiry', 'fullName', 'cvcode'];
+    const fieldNames = ['addr1', 'addr2', 'city', 'state', 'zip', 'email', 'creditCard', 'expiry', 'fullName', 'cvcode'];
     const inputMap = fieldNames.reduce((acc, name) => {
       acc[name] = domNode.querySelector(`.checkout input[name="${name}"]`);
       return acc;
@@ -41,6 +41,10 @@ describe('receipt', function () {
     describe('after entering all fields and clicking pay button', function () {
       beforeEach(function () {
         enterData({
+          addr1: '3005 Williams Ct.',
+          city:  'Kokomo',
+          state: 'IN',
+          zip:   '54321',
           email: 'a@b.com',
           creditCard: '4111111111111111',
           expiry: '12/20',

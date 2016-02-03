@@ -20,7 +20,7 @@ describe('Checkout Tests', function () {
   
   // KJB: utility driving GUI data entry for validation tests
   function enterData(data) { // data is simple object with field/value pairs ... ex: { email: 'a@b.com', expiry: '12/20' }
-    const fieldNames = ['email', 'creditCard', 'expiry', 'fullName', 'cvcode'];
+    const fieldNames = ['addr1', 'addr2', 'city', 'state', 'zip', 'email', 'creditCard', 'expiry', 'fullName', 'cvcode'];
 
     // KJB: kool - provides a DOM mapping of all our input fields
     //      ... ex: inputDomMap.email is the dom input for email
@@ -66,9 +66,9 @@ describe('Checkout Tests', function () {
         TestUtils.Simulate.click(renderedDomNode.querySelector('button.pay'));
       });
 
-      it('should show 9 errors', function () {
+      it('should show 14 errors', function () {
         const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-        expect(errorDivs.length).toBe(9);
+        expect(errorDivs.length).toBe(14);
       });
 
       describe('after entering email', function () {
@@ -77,9 +77,9 @@ describe('Checkout Tests', function () {
           TestUtils.Simulate.change(email, { target: { name: 'email', value: 'a@b.com' }});
         });
 
-        it('should have 8 errors', function () {
+        it('should have 13 errors', function () {
           const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-          expect(errorDivs.length).toBe(8);
+          expect(errorDivs.length).toBe(13);
         });
 
       });
@@ -94,15 +94,19 @@ describe('Checkout Tests', function () {
           });
         });
 
-        it('should have 4 errors', function () {
+        it('should have 9 errors', function () {
           const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-          expect(errorDivs.length).toBe(4);
+          expect(errorDivs.length).toBe(9);
         });
       });
 
       describe('after entering all fields', function () {
         beforeEach(function () {
           enterData({
+            addr1: '3005 Williams Ct.',
+            city:  'Kokomo',
+            state: 'IN',
+            zip:   '54321',
             email: 'a@b.com',
             creditCard: '4111111111111111',
             expiry: '12/20',

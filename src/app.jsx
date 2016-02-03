@@ -25,11 +25,17 @@ class App extends MyReactComponent {
 
       checkoutOpen: false, // is the checkout dialog open?
       total:        null,  // currency KJB: unsure yet how this is going to work
+
       receiptId:    null,
 
       // fields supporting our checkout
       // ... attr names must match <Checkout> form field names
       // KJB: Can state have depth in it's structure, rather than this flat list of field?
+      addr1:      "", // string
+      addr2:      "", // string
+      city:       "", // string
+      state:      "", // string
+      zip:        "", // string
       email:      "", // string
       creditCard: "", // string
       expiry:     "", // string
@@ -96,6 +102,11 @@ class App extends MyReactComponent {
     // fields to send to <Checkout> as a simple property object
     // ... making it simpler to pass to CheckOut
     const fields = {
+      addr1:      this.state.addr1,
+      addr2:      this.state.addr2,
+      city:       this.state.city,
+      state:      this.state.state,
+      zip:        this.state.zip,
       email:      this.state.email,
       creditCard: this.state.creditCard,
       expiry:     this.state.expiry,
