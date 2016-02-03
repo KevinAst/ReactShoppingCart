@@ -17,7 +17,7 @@ and receipt, retrieving data from simulated rest service.
 - 240-catalog-buy-buttons: Provide "buy" button basics
 - 250-checkout: Collect billing info with a form
 - 260-validate-submit: Provide checkout validation using joi framework
-
+- 270-receipt: Create a receipt
 
 ## Jeff's Notes:
 
