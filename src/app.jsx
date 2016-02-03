@@ -8,6 +8,7 @@ import React            from 'react';
 import MyReactComponent from './my-react-component';
 import Catalog          from './catalog';
 import Checkout         from './checkout';
+import Receipt          from './receipt';
 
 class App extends MyReactComponent {
 
@@ -39,7 +40,7 @@ class App extends MyReactComponent {
 
   render() {
     const { items } = this.props;
-    const { itemExpanded, category, checkoutOpen } = this.state;
+    const { itemExpanded, category, checkoutOpen, receiptId } = this.state;
 
     const filteredItems = category ?
                             items.filter(x => x.category === category) :
@@ -47,6 +48,7 @@ class App extends MyReactComponent {
     return (
       <div>
         { checkoutOpen && this.renderCheckoutDialog() }
+        { receiptId && this.renderReceiptDialog() } {/* KJB: auto render receipt dialog, when checkout defines a receiptId  */}
         <Catalog items={filteredItems}
                  itemExpanded={itemExpanded}
                  buyFn={this.showCheckoutDialog}
@@ -136,7 +138,6 @@ class App extends MyReactComponent {
     });
   }
 
-
   saleCompleted(receiptId) {
     this.setState({
       total:        null,
@@ -146,6 +147,26 @@ class App extends MyReactComponent {
       cvcode:       null,      // clear sensitive state
     });
   }
+
+
+  // ***
+  // *** Receipt related ...
+  // ***
+
+  renderReceiptDialog () {
+    return (
+      <Receipt
+          receiptId={this.state.receiptId}
+          closeFn={this.closeReceiptDialog} />
+    );
+  }
+
+  closeReceiptDialog() {
+    this.setState({ 
+      receiptId:    null
+    });
+  }
+
 
 }
 
