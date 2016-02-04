@@ -1,3 +1,5 @@
+@import (inline) "../node_modules/react-select/dist/react-select.css";
+
 // Constants
 @mainFontSize: 24px;
 @extraSmallFontSize: 14px;
@@ -154,15 +156,35 @@ button {
           width: 340px;
         }
         input[name="city"] {
-          width: 20ch;
+          width: 15ch;
           margin-right: 10px;          
         }
-        input[name="state"] {
-          width: 2ch;
-          margin-right: 10px;          
+
+        .Select {
+          display: inline-block; /* display in-line rather than on next line */
         }
+        .Select-control { /* state selector */
+          width:  15ch;
+          height: 22px;
+        }
+        .Select-placeholder {
+          line-height: 20px;
+        }
+        .Select-input {
+          height: 20px;
+        }
+        .Select-input > input {
+          height: 20px;
+        }
+        .Select-option {
+          padding: 1px 2px;
+        }
+        .Select-searching {
+          padding: 1px 2px;
+        }
+
         input[name="zip"] {
-          width: 12ch;
+          width: 10ch;
         }
       }
       .ccLabel {

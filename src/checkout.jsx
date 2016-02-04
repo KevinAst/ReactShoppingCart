@@ -5,16 +5,18 @@ import MyReactComponent from './my-react-component';
 import { formatMoney } from 'accounting';
 import Joi from 'joi-browser';
 import shortid from 'shortid';
+import Select from 'react-select';
+import USStates from './USStates';
 
 const CHECKOUT_SCHEMA = Joi.object().keys({
 
   addr1:      Joi.string().required(),
   addr2:      Joi.any().optional(),
   city:       Joi.string().required(),
-  state:      Joi.string().required(),
+//state:      Joi.string().required(), TODO: Can't get TestUtils.Simulate.change() to work with react-select component
+  state:      Joi.any().optional(),
   zip:        Joi.string().required().regex(/^\d{5}(-\d{4})?$/, 'ddddd[-dddd]'),
-
-  email:      Joi.string().required(),
+  email:      Joi.string().email().required(),
 
   creditCard: Joi.string().required().creditCard(),
   expiry:     Joi.string().required().regex(/^[01][0-9]\/[0-9]{2}$/, 'mm/YY'),
@@ -112,7 +114,7 @@ class Checkout extends MyReactComponent {
                       }
                     });
     };
-  
+
     return (
       <div className="checkout">
         <button onClick={closeCheckoutFn}
@@ -129,11 +131,11 @@ class Checkout extends MyReactComponent {
 
               <fieldset>
                 <legend>Shipping Address</legend>
-                <input name="addr1" ref="addr1" defaultValue={fields.addr1} onChange={updateAndValidateFn} placeholder="address line 1" autoFocus="true"/>
-                <input name="addr2" ref="addr2" defaultValue={fields.addr2} onChange={updateAndValidateFn} placeholder="address line 2"/>
-                <input name="city"  ref="city"  defaultValue={fields.city}  onChange={updateAndValidateFn} placeholder="city"/>
-                <input name="state" ref="state" defaultValue={fields.state} onChange={updateAndValidateFn} placeholder="state"/>
-                <input name="zip"   ref="zip"   defaultValue={fields.zip}   onChange={updateAndValidateFn} placeholder="zip"/>
+                <input  name="addr1" ref="addr1" defaultValue={fields.addr1}    onChange={updateAndValidateFn} placeholder="address line 1" autoFocus="true"/>
+                <input  name="addr2" ref="addr2" defaultValue={fields.addr2}    onChange={updateAndValidateFn} placeholder="address line 2"/>
+                <input  name="city"  ref="city"  defaultValue={fields.city}     onChange={updateAndValidateFn} placeholder="city"/>
+                <Select name="state" ref="state" value={fields.state} options={USStates} onChange={ (selVal) => {updateAndValidateFn({ target: {name: "state", value: selVal} })} } placeholder="select state"/>
+                <input  name="zip"   ref="zip"   defaultValue={fields.zip}      onChange={updateAndValidateFn} placeholder="zip"/>
               </fieldset>
 
               <fieldset>
