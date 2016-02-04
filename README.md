@@ -18,6 +18,7 @@ and receipt, retrieving data from simulated rest service.
 - 250-checkout: Collect billing info with a form
 - 260-validate-submit: Provide checkout validation using joi framework
 - 270-receipt: Create a receipt
+- 276-ship-addr-challenge: provide shipping address in Checkout dialog
 
 ## Jeff's Notes:
 
