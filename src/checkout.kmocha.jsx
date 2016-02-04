@@ -34,6 +34,7 @@ describe('Checkout Tests', function () {
       const v = data[k];
 
       // KJB: kool - simulate change in our input dom
+      // TODO: for k==="state", figure out how TestUtils.Simulate.change() works with react-select component, THEN un-initialize this.state.state in app.jsx
       TestUtils.Simulate.change(inputDomMap[k], { target: { name: k, value: v }});
     });
   }

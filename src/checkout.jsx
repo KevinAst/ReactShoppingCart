@@ -13,8 +13,7 @@ const CHECKOUT_SCHEMA = Joi.object().keys({
   addr1:      Joi.string().required(),
   addr2:      Joi.any().optional(),
   city:       Joi.string().required(),
-//state:      Joi.string().required(), TODO: Can't get TestUtils.Simulate.change() to work with react-select component
-  state:      Joi.any().optional(),
+  state:      Joi.string().required(),
   zip:        Joi.string().required().regex(/^\d{5}(-\d{4})?$/, 'ddddd[-dddd]'),
   email:      Joi.string().email().required(),
 
@@ -123,7 +122,7 @@ class Checkout extends MyReactComponent {
           Total:
           <span className="formattedTotal">{ formatMoney(total) }</span>
         </span>
-        { error && showErrors && this.errors() }
+        { error && showErrors && this.displayErrors() }
         <div className="formWrapper">
           <form>
             <fieldset className="userInfo">
@@ -131,16 +130,17 @@ class Checkout extends MyReactComponent {
 
               <fieldset>
                 <legend>Shipping Address</legend>
-                <input  name="addr1" ref="addr1" defaultValue={fields.addr1}    onChange={updateAndValidateFn} placeholder="address line 1" autoFocus="true"/>
-                <input  name="addr2" ref="addr2" defaultValue={fields.addr2}    onChange={updateAndValidateFn} placeholder="address line 2"/>
-                <input  name="city"  ref="city"  defaultValue={fields.city}     onChange={updateAndValidateFn} placeholder="city"/>
-                <Select name="state" ref="state" value={fields.state} options={USStates} onChange={ (selVal) => {updateAndValidateFn({ target: {name: "state", value: selVal} })} } placeholder="select state"/>
-                <input  name="zip"   ref="zip"   defaultValue={fields.zip}      onChange={updateAndValidateFn} placeholder="zip"/>
+                <input className={this.inputClassNames("addr1")}    name="addr1" ref="addr1" defaultValue={fields.addr1}    onChange={updateAndValidateFn} placeholder="address line 1" autoFocus="true"/>
+                <input className={this.inputClassNames("addr2")}    name="addr2" ref="addr2" defaultValue={fields.addr2}    onChange={updateAndValidateFn} placeholder="address line 2"/>
+                <input className={this.inputClassNames("city")}     name="city"  ref="city"  defaultValue={fields.city}     onChange={updateAndValidateFn} placeholder="city"/>
+                <Select className={this.inputClassNames("state")}   name="state" ref="state" value={fields.state} options={USStates} onChange={ (selVal) => {updateAndValidateFn({ target: {name: "state", value: selVal} })} } placeholder="select state"/>
+                <input className={this.inputClassNames(name="zip")} name="zip"   ref="zip"   defaultValue={fields.zip}      onChange={updateAndValidateFn} placeholder="zip"/>
               </fieldset>
 
               <fieldset>
                 <legend>Email</legend>
-                <input name="email"
+                <input className={this.inputClassNames("email")}
+                       name="email"
                        ref="email"
                        defaultValue={fields.email}
                        onChange={updateAndValidateFn}
@@ -152,7 +152,8 @@ class Checkout extends MyReactComponent {
               <legend>Credit Card</legend>
               <label className="ccLabel">
                 <span>CardNumber</span>
-                <input name="creditCard"
+                <input className={this.inputClassNames("creditCard")}
+                       name="creditCard"
                        ref="creditCard"
                        value={fields.creditCard}
                        onChange={updateAndValidateFn}
@@ -162,7 +163,8 @@ class Checkout extends MyReactComponent {
               <div className="meta">
                 <label>
                   <span>Expiry Date</span>
-                  <input name="expiry"
+                  <input className={this.inputClassNames("expiry")}
+                         name="expiry"
                          ref="expiry"
                          onChange={updateAndValidateFn}
                          onBlur={updatedExpiryFn}
@@ -171,17 +173,19 @@ class Checkout extends MyReactComponent {
                 </label>
                 <label>
                   <span>Full Name</span>
-                  <input name="fullName"
+                  <input className={this.inputClassNames("fullName")}
+                         name="fullName"
                          ref="fullName"
                          onChange={updateAndValidateFn}
                          defaultValue={fields.fullName}
                          placeholder="John Doe"
                   />
-  
+                  
                 </label>
                 <label>
                   <span>CV Code</span>
-                  <input name="cvcode"
+                  <input className={this.inputClassNames("cvcode")}
+                         name="cvcode"
                          ref="cvcode"
                          onChange={updateAndValidateFn}
                          placeholder="123" />
@@ -204,7 +208,7 @@ class Checkout extends MyReactComponent {
     );
   }
 
-  errors() {
+  displayErrors() {
     const errors = this.state.error.details;
     return (
       <div className="errors">
@@ -217,6 +221,11 @@ class Checkout extends MyReactComponent {
     );
   }
 
+  inputClassNames(forField) {
+    const errors        = this.state.error ? this.state.error.details : [{path:""}];
+    const fieldHasError = errors.find( elm => elm.path === forField);
+    return fieldHasError && this.state.showErrors ? "inputError" : "";
+  }
 
 }
 
