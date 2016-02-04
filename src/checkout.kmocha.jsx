@@ -67,9 +67,9 @@ describe('Checkout Tests', function () {
         TestUtils.Simulate.click(renderedDomNode.querySelector('button.pay'));
       });
 
-      it('should show 14 errors', function () {
+      it('should show 8 errors', function () {
         const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-        expect(errorDivs.length).toBe(14);
+        expect(errorDivs.length).toBe(8);
       });
 
       describe('after entering email', function () {
@@ -78,9 +78,9 @@ describe('Checkout Tests', function () {
           TestUtils.Simulate.change(email, { target: { name: 'email', value: 'a@b.com' }});
         });
 
-        it('should have 12 errors', function () {
+        it('should have 7 errors', function () {
           const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-          expect(errorDivs.length).toBe(12);
+          expect(errorDivs.length).toBe(7);
         });
 
       });
@@ -95,9 +95,9 @@ describe('Checkout Tests', function () {
           });
         });
 
-        it('should have 8 errors', function () {
+        it('should have 5 errors', function () {
           const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-          expect(errorDivs.length).toBe(8);
+          expect(errorDivs.length).toBe(5);
         });
       });
 
