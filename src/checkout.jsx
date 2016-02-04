@@ -3,7 +3,7 @@
 import React from 'react';
 import MyReactComponent from './my-react-component';
 import { formatMoney } from 'accounting';
-import Joi from 'joi-browser';
+import Joi from './kevin-joi';
 import shortid from 'shortid';
 import Select from 'react-select';
 import USStates from './USStates';
@@ -32,7 +32,7 @@ class Checkout extends MyReactComponent {
 
     this.state = {
       showErrors: false, // are we showing errors in our dialog?
-      error:      null   // the most current joi validation errors result {array}
+      error:      null   // the most current joi validation error structure (will be null for none)
     };
   }
 
@@ -43,17 +43,17 @@ class Checkout extends MyReactComponent {
 
     // utility function to peform validation, in addition to our normal parameterized update
     const updateAndValidateFn = (e) => {
-      const updatedProps = 
-              Object.assign({},
-                            fields, // merge our current fields
-                            { [e.target.name]: e.target.value }); // with the recent change
-
       // perform our usual update
       updatedFn(e);
 
       // validate our fields and reflect errors in our gui
-      const res = validate(updatedProps);
-      this.setState({ error: res.error }); // ... can be undefined, when valid
+      const updatedProps = 
+      Object.assign({},
+                    fields, // merge our current fields
+                    { [e.target.name]: e.target.value }); // with the recent change
+
+      const joiResult = validate(updatedProps);
+      this.setState({ error: joiResult.error }); // ... will be undefined, when valid
     };
 
     // utility function to format our Credic Card (when it looses focus)
@@ -89,16 +89,16 @@ class Checkout extends MyReactComponent {
       e.preventDefault();
 
       // perform validation
-      const res = validate(fields);
-      this.setState({ showErrors: res.error, // (boolean truethy) stop showing errors once valid again
-                      error:      res.error
+      const joiResult = validate(fields);
+      this.setState({ showErrors: joiResult.error, // (boolean truethy) stop showing errors once valid again
+                      error:      joiResult.error
                      }, 
                     () => { // callback of setState() to be executed once state has been applied and rendered
 
                       // for errors ...
-                      if (res.error) {
+                      if (joiResult.error) {
                         // give focus to first invalid field
-                        this.refs[res.error.details[0].path].focus();
+                        this.refs[joiResult.error.details[0].path].focus();
                       }
                       
                       // for no errors ...
@@ -271,8 +271,10 @@ function validate(fields) {
     fields,
     { creditCard: ccFormatted.replace(/\s/g, '') } // KJB: raw creditCard (i.e. remove spaces)
   );
+
   return Joi.validate(rawFields, CHECKOUT_SCHEMA, {
-    abortEarly: false // KJB: give us all the errors at once
+    abortEarly: false, // give us all the errors at once (both for all fields and multiple errors per field)
+    kevinSaysPruneDupPaths: true, // only emit the first of potentially may errors per field (i.e. path)
   });
 }
 
