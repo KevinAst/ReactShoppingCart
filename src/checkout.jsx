@@ -16,8 +16,7 @@ const CHECKOUT_SCHEMA = Joi.object().keys({
   state:      Joi.string().required(),
   zip:        Joi.string().required().regex(/^\d{5}(-\d{4})?$/, 'ddddd[-dddd]'),
   email:      Joi.string().email().required(),
-
-  creditCard: Joi.string().required().creditCard(),
+  creditCard: Joi.string().required().replace(/\s/g, '').creditCard(),
   expiry:     Joi.string().required().regex(/^[01][0-9]\/[0-9]{2}$/, 'mm/YY'),
   fullName:   Joi.string().required(),
   cvcode:     Joi.string().required().min(3).max(4).regex(/^\d{3,4}$/, 'all digits')
@@ -265,14 +264,7 @@ function pad2(amt) {
 
 // perform Joi validation
 function validate(fields) {
-  const ccFormatted = fields.creditCard || '';
-  const rawFields = Object.assign(
-    {},
-    fields,
-    { creditCard: ccFormatted.replace(/\s/g, '') } // KJB: raw creditCard (i.e. remove spaces)
-  );
-
-  return Joi.validate(rawFields, CHECKOUT_SCHEMA, {
+  return Joi.validate(fields, CHECKOUT_SCHEMA, {
     abortEarly: false, // give us all the errors at once (both for all fields and multiple errors per field)
     kevinSaysPruneDupPaths: true, // only emit the first of potentially may errors per field (i.e. path)
   });
