@@ -131,8 +131,10 @@ import Joi from 'joi-browser';
  * 
  *   isFieldValid(field): boolean
  *   prominentFieldMsg(field): String
- *   detailedFieldMsg(field): String
+ *   detailedFieldMsg(field):  String
+ *   detailedFieldMsgs(field): String[]
  *
+ * @author Kevin Bridges
  */
 class AlmondJoi {
 
@@ -284,13 +286,22 @@ class AlmondJoi {
     return cntlField.consolidatedMsg || cntlField.detailedMsgs[0];
   }
 
-  // return the initial joi detailed error message (if any) for the given field, describing specific violations
+  // return the initial joi detailed error message (if any) for the
+  // given field (one per field), describing specific violations
   // ... "" for valid (or field not yet being validated)
   detailedFieldMsg(field) {
     if (this.isFieldValid(field))
       return "";
     const  cntlField = this.cntlField(field);
     return cntlField.detailedMsgs[0];
+  }
+
+  // return all the joi detailed error messages (if any) for the
+  // given field, describing specific violations
+  // ... [] for valid (or field not yet being validated)
+  detailedFieldMsgs(field) {
+    const  cntlField = this.cntlField(field);
+    return cntlField.detailedMsgs;
   }
 
   // INTERNAL
