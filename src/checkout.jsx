@@ -148,24 +148,21 @@ class Checkout extends MyReactComponent {
                     });
     };
 
-    // convenience function to generate <input> elm with defaultValue= semantics and various common properties
+    // convenience function to generate <input> elm with overridable common properties
     const inputTemplate = (fieldName, valueHeuristic, additionalProps) => {
       const commonProps = {
-        name:      fieldName,
-        ref:       fieldName,
-        className: this.inputClassNames(fieldName),
-        title:     this.fieldMsgTitle(fieldName),
-        onChange:  fieldChanged,
-        onBlur:    fieldVisited
+        name:             fieldName,
+        ref:              fieldName,
+        className:        this.inputClassNames(fieldName),
+        title:            this.fieldMsgTitle(fieldName),
+        [valueHeuristic]: fields[fieldName], // ... either value= or defaultValue=
+        onChange:         fieldChanged,
+        onBlur:           fieldVisited
       };
 
-      const defaultValue = { defaultValue: fields[fieldName] };
-      const value        = { value:        fields[fieldName] };
-      const usedValue    = (valueHeuristic === "defaultValue") ? defaultValue : value;
+      const propsInUse = Object.assign({}, commonProps, additionalProps);
 
-      const props = Object.assign({}, commonProps, usedValue, additionalProps);
-
-      return <input {...props}/>;
+      return <input {...propsInUse}/>;
     };
     const inputDefault = (fieldName, additionalProps) => inputTemplate(fieldName, "defaultValue", additionalProps);
     const input        = (fieldName, additionalProps) => inputTemplate(fieldName, "value",        additionalProps);
@@ -188,7 +185,9 @@ class Checkout extends MyReactComponent {
                 {inputDefault("addr1", {placeholder:"address line 1", autoFocus:"true", })}
                 {inputDefault("addr2", {placeholder:"address line 2", })}
                 {inputDefault("city",  {placeholder:"city", })}
-                <Select name="state" ref="state" className={this.inputClassNames("state")} title={this.fieldMsgTitle("state")} 
+                <Select name="state" ref="state"
+                        className={this.inputClassNames("state")}
+                        title={this.fieldMsgTitle("state")} 
                         value={fields.state} options={USStates} 
                         onChange={ (selVal) => { fieldChanged({ target: {name: "state", value: selVal} }) }}
                         onBlur={   ()       => { fieldVisited({ target: {name: "state"}                }) }} />
