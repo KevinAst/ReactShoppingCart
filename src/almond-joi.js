@@ -1,6 +1,8 @@
 'use strict';
 
 import Joi from 'joi-browser';
+import crc from 'crc';
+
 
 /**
  * AlmondJoi is a thin wrapper around the Joi Validation utility,
@@ -220,7 +222,7 @@ class AlmondJoi {
       this.cntl[field].detailedMsgs = [];
     }
     // ... retain new joiResult, and accumulate our validationState
-    let validationState   = ""; // TODO: eventually a hash
+    let validationState   = crc.crc32("AlmondJoi:validationState");
     let firstFieldInError = null;
     if (joiResult.error) { // something was invalid
       for (const detail of joiResult.error.details) {
@@ -232,7 +234,7 @@ class AlmondJoi {
           this.cntl[path].detailedMsgs.push(detail.message);
           if (this.cntl[path].detailedMsgs.length === 1) // allProminentMsgs only contain the first msg per field
             allProminentMsgs.push( this.cntl[path].consolidatedMsg || detail.message);
-          validationState += detail.message; // TODO: eventually a hash
+          validationState = crc.crc32(detail.message, validationState);
         }
       }
     }
@@ -240,7 +242,8 @@ class AlmondJoi {
     _allProminentMsgs.set(this, allProminentMsgs);
 
     // that's all folks :-)
-    return validationState;
+    // console.log("validationState: " + validationState.toString(16));
+    return validationState.toString(16);
   }
 
   // return indicator as to ALL fields are valid [or NOT being validated] (true) or invalid (false)
