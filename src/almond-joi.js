@@ -65,18 +65,9 @@ import Joi from 'joi-browser';
  *   form request is issued (see: activateAllValidation()).
  * 
  * As an example, once an email address has been entered, and the user
- * tabs off of that field, we can validate it:
- * 
- *   xx pic
- * 
- * After a correction:
- * 
- *   xx pic
- * 
- * Of course course, when you click the Pay button, all remaining
- * validation occurs (as always):
- * 
- *   xx pic
+ * tabs off of that field, we can validate it.  Of course course, when
+ * you click the Pay button, all remaining validation occurs (as
+ * always):
  * 
  * 
  * Consolidated Messages
