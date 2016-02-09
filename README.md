@@ -20,6 +20,8 @@ and receipt, retrieving data from simulated rest service.
 - 270-receipt: Create a receipt
 - 276-ship-addr-challenge: provide shipping address in Checkout dialog
 - 277-red-fields-challenge: add red border around fields that are invalid
+- kjb-app-joi-wrapper: Utilize value-added Joi Wrapper to meet app-specific requrements
+
 
 ## Jeff's Notes:
 

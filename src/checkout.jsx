@@ -1,28 +1,13 @@
 'use strict';
 
-import React from 'react';
+import React     from 'react';
 import MyReactComponent from './my-react-component';
-import { formatMoney } from 'accounting';
-import Joi from './kevin-joi';
-import shortid from 'shortid';
-import Select from 'react-select';
-import USStates from './USStates';
-
-const CHECKOUT_SCHEMA = Joi.object().keys({
-
-  addr1:      Joi.string().required(),
-  addr2:      Joi.any().optional(),
-  city:       Joi.string().required(),
-  state:      Joi.string().required(),
-  zip:        Joi.string().required().regex(/^\d{5}(-\d{4})?$/, 'ddddd[-dddd]'),
-  email:      Joi.string().email().required(),
-  creditCard: Joi.string().required().replace(/\s/g, '').creditCard(),
-  expiry:     Joi.string().required().regex(/^[01][0-9]\/[0-9]{2}$/, 'mm/YY'),
-  fullName:   Joi.string().required(),
-  cvcode:     Joi.string().required().min(3).max(4).regex(/^\d{3,4}$/, 'all digits')
-});
-
-
+import { formatMoney }  from 'accounting';
+import Joi       from 'joi-browser';
+import AlmondJoi from './almond-joi';
+import shortid   from 'shortid';
+import Select    from 'react-select';
+import USStates  from './USStates';
 
 class Checkout extends MyReactComponent {
 
@@ -30,78 +15,124 @@ class Checkout extends MyReactComponent {
     super(...args);
 
     this.state = {
-      showErrors: false, // are we showing errors in our dialog?
-      error:      null   // the most current joi validation error structure (will be null for none)
+      validationState: 0, // a hash of our overal validation state
     };
+
+    // define our validation schema
+    // ... we instantiate on each Checkout instance, as it holds instance level validation state
+    this.checkoutSchema = new AlmondJoi({
+      addr1:      { joi: Joi.string().required(),
+                    consolidatedMsg: "address line 1 is required",
+                    /* TRY THIS (to activate validation from the get-go: beingValidated: true */ },
+      addr2:      { joi: Joi.any().optional() },
+      city:       { joi: Joi.string().required(),
+                    consolidatedMsg: "city is required" },
+      state:      { joi: Joi.string().required(),
+                    consolidatedMsg: "state is required (choose from the selection list)" },
+      zip:        { joi: Joi.string().required().regex(/^\d{5}(-\d{4})?$/, 'ddddd[-dddd]'), 
+                    consolidatedMsg: "zip is required: format: ddddd[-dddd]" },
+      email:      { joi: Joi.string().email().required(),
+                    consolidatedMsg: "Email is required and must be a valid email address" },
+      creditCard: { joi: Joi.string().required().replace(/\s/g, '').creditCard(),
+                    consolidatedMsg: "Credit Card Number is required and must be a card format" },
+      expiry:     { joi: Joi.string().required().regex(/^[01][0-9]\/[0-9]{2}$/, 'mm/YY'),
+                    consolidatedMsg: "Expiry Date is required: format: mm/YY" },
+      fullName:   { joi: Joi.string().required(),
+                    consolidatedMsg: "Full Name is required" },
+      cvcode:     { joi: Joi.string().required().min(3).max(4).regex(/^\d{3,4}$/, 'all digits'),
+                    consolidatedMsg: "CV Code is required: 3 or 4 digits" },
+    });
+
+  }
+
+  componentDidMount() {
+    // perform initial validation, once our initial rendering occurs
+    this.setState({ validationState: this.checkoutSchema.validate(this.props.fields) });
   }
 
   render() {
     const { fields, total, closeCheckoutFn, updatedFn, saleCompletedFn} = this.props;
 
-    const { error, showErrors } = this.state;
+    const { validationState } = this.state;
 
-    // utility function to peform validation, in addition to our normal parameterized update
-    const updateAndValidateFn = (e) => {
-      // perform our usual update
+    // update our internal representation of a field change, and perform validation
+    const fieldChanged = (e) => {
+      // perform our base update (supplied by the client of <Checkout>
       updatedFn(e);
 
-      // validate our fields and reflect errors in our gui
-      const updatedProps = 
-      Object.assign({},
-                    fields, // merge our current fields
-                    { [e.target.name]: e.target.value }); // with the recent change
+      // inform our validation schema that this field has changed
+      // ... stimulating deterministic validation
+      this.checkoutSchema.fieldHasChanged(e.target.name);
 
-      const joiResult = validate(updatedProps);
-      this.setState({ error: joiResult.error }); // ... will be undefined, when valid
+      // validate our fields, reflecting errors in our GUI
+      const updatedProps = // merge our current fields with this recent change
+        Object.assign({},
+                      fields,
+                      { [e.target.name]: e.target.value });
+
+      const validationState = this.checkoutSchema.validate(updatedProps);
+      this.setState({ validationState: validationState });
     };
 
-    // utility function to format our Credic Card (when it looses focus)
-    const updatedCreditCardFn = (e) => {
-      const fieldName = e.target.name;
-      const card      = e.target.value;
-      updateAndValidateFn({
+    // perform validation when field has been visited (i.e. focus loss or blur)
+    // ... NOTE: this validaion can be conditional based on checkoutSchema heuristics
+    const fieldVisited = (e) => {
+
+      // inform our validation schema that this field has been visited
+      // ... stimulating deterministic validation
+      this.checkoutSchema.fieldHasBeenVisited(e.target.name);
+
+      // validate our fields, reflecting errors in our GUI
+      // NOTE: hopefully this is not a race condition
+      //       ... i.e. has our fields been updated by now (from onChange)?
+      //                I do not think it is
+      this.setState({ validationState: this.checkoutSchema.validate(fields) });
+    };
+
+
+    // utility function to format our Credit Card (when it looses focus)
+    const creditCardVisited = (e) => {
+      // inform our validation schema that this field has been visited
+      // ... stimulating deterministic validation
+      this.checkoutSchema.fieldHasBeenVisited(e.target.name);
+
+      // format our credit card
+      fieldChanged({
         target: {
-          name:  fieldName,
-          value: formatCreditCard(card)
+          name:  e.target.name,
+          value: formatCreditCard(e.target.value)
         }
       });
     };
   
     // utility function to format our Expiry Date (when it looses focus)
-    const updatedExpiryFn = (e) => {
-      const fieldName = e.target.name;
-      const expiry    = e.target.value;
-      updateAndValidateFn({
+    const expiryVisited = (e) => {
+      // inform our validation schema that this field has been visited
+      // ... stimulating deterministic validation
+      this.checkoutSchema.fieldHasBeenVisited(e.target.name);
+
+      // format our expiry
+      fieldChanged({
         target: {
-          name:  fieldName,
-          value: formatExpiry(expiry)
+          name:  e.target.name,
+          value: formatExpiry(e.target.value)
         }
       });
     };
 
-    // utility function to process a purchase
+    // our purchase button was clicked
     const purchaseClick = (e) => {
 
-      // prevent other handlers from firing (in this case our form would do a submit)
-      // ... KJB: vs. stopPropagation()
-      //          google: event stopPropagation vs. preventDefault
+      // prevent default handler from firing (in this case our form would do a submit)
       e.preventDefault();
 
-      // perform validation
-      const joiResult = validate(fields);
-      this.setState({ showErrors: joiResult.error, // (boolean truethy) stop showing errors once valid again
-                      error:      joiResult.error
-                     }, 
+      // perform validation ... on ALL fields in our form
+      this.checkoutSchema.activateAllValidation();
+      const validationState = this.checkoutSchema.validate(fields);
+      this.setState({ validationState: validationState }, 
                     () => { // callback of setState() to be executed once state has been applied and rendered
 
-                      // for errors ...
-                      if (joiResult.error) {
-                        // give focus to first invalid field
-                        this.refs[joiResult.error.details[0].path].focus();
-                      }
-                      
-                      // for no errors ...
-                      else {
+                      if (this.checkoutSchema.isValid()) {
                         // we can now submit to server and if successful transition
                         // to receipt
                         // be sure to send server item ids and total, let it verify total
@@ -110,8 +141,34 @@ class Checkout extends MyReactComponent {
                         const receiptId = shortid.generate(); // TODO eventually from server
                         saleCompletedFn(receiptId);
                       }
+                      else {
+                        // give focus to first invalid field
+                        this.refs[this.checkoutSchema.firstFieldInError()].focus();
+                      }
                     });
     };
+
+    // convenience function to generate <input> elm with defaultValue= semantics and various common properties
+    const inputTemplate = (fieldName, valueHeuristic, additionalProps) => {
+      const commonProps = {
+        name:      fieldName,
+        ref:       fieldName,
+        className: this.inputClassNames(fieldName),
+        title:     this.fieldMsgTitle(fieldName),
+        onChange:  fieldChanged,
+        onBlur:    fieldVisited
+      };
+
+      const defaultValue = { defaultValue: fields[fieldName] };
+      const value        = { value:        fields[fieldName] };
+      const usedValue    = (valueHeuristic === "defaultValue") ? defaultValue : value;
+
+      const props = Object.assign({}, commonProps, usedValue, additionalProps);
+
+      return <input {...props}/>;
+    };
+    const inputDefault = (fieldName, additionalProps) => inputTemplate(fieldName, "defaultValue", additionalProps);
+    const input        = (fieldName, additionalProps) => inputTemplate(fieldName, "value",        additionalProps);
 
     return (
       <div className="checkout">
@@ -121,7 +178,6 @@ class Checkout extends MyReactComponent {
           Total:
           <span className="formattedTotal">{ formatMoney(total) }</span>
         </span>
-        { error && showErrors && this.displayErrors() }
         <div className="formWrapper">
           <form>
             <fieldset className="userInfo">
@@ -129,21 +185,19 @@ class Checkout extends MyReactComponent {
 
               <fieldset>
                 <legend>Shipping Address</legend>
-                <input className={this.inputClassNames("addr1")}    name="addr1" ref="addr1" defaultValue={fields.addr1}    onChange={updateAndValidateFn} placeholder="address line 1" autoFocus="true"/>
-                <input className={this.inputClassNames("addr2")}    name="addr2" ref="addr2" defaultValue={fields.addr2}    onChange={updateAndValidateFn} placeholder="address line 2"/>
-                <input className={this.inputClassNames("city")}     name="city"  ref="city"  defaultValue={fields.city}     onChange={updateAndValidateFn} placeholder="city"/>
-                <Select className={this.inputClassNames("state")}   name="state" ref="state" value={fields.state} options={USStates} onChange={ (selVal) => {updateAndValidateFn({ target: {name: "state", value: selVal} })} } placeholder="select state"/>
-                <input className={this.inputClassNames(name="zip")} name="zip"   ref="zip"   defaultValue={fields.zip}      onChange={updateAndValidateFn} placeholder="zip"/>
+                {inputDefault("addr1", {placeholder:"address line 1", autoFocus:"true", })}
+                {inputDefault("addr2", {placeholder:"address line 2", })}
+                {inputDefault("city",  {placeholder:"city", })}
+                <Select name="state" ref="state" className={this.inputClassNames("state")} title={this.fieldMsgTitle("state")} 
+                        value={fields.state} options={USStates} 
+                        onChange={ (selVal) => { fieldChanged({ target: {name: "state", value: selVal} }) }}
+                        onBlur={   ()       => { fieldVisited({ target: {name: "state"}                }) }} />
+                {inputDefault("zip",  {placeholder:"zip", })}
               </fieldset>
 
               <fieldset>
                 <legend>Email</legend>
-                <input className={this.inputClassNames("email")}
-                       name="email"
-                       ref="email"
-                       defaultValue={fields.email}
-                       onChange={updateAndValidateFn}
-                       placeholder="Your email address" />
+                {inputDefault("email", {placeholder:"Your email address", })}
               </fieldset>
             </fieldset>
 
@@ -151,47 +205,30 @@ class Checkout extends MyReactComponent {
               <legend>Credit Card</legend>
               <label className="ccLabel">
                 <span>CardNumber</span>
-                <input className={this.inputClassNames("creditCard")}
-                       name="creditCard"
-                       ref="creditCard"
-                       value={fields.creditCard}
-                       onChange={updateAndValidateFn}
-                       onBlur={updatedCreditCardFn}
-                       placeholder="1234 5678 90123" />
+                {input("creditCard", {placeholder:"1234 5678 90123", onBlur: creditCardVisited })}
               </label>
               <div className="meta">
                 <label>
                   <span>Expiry Date</span>
-                  <input className={this.inputClassNames("expiry")}
-                         name="expiry"
-                         ref="expiry"
-                         onChange={updateAndValidateFn}
-                         onBlur={updatedExpiryFn}
-                         value={fields.expiry}
-                         placeholder="mm/YY" />
+                  {input("expiry", {placeholder:"mm/YY", onBlur: expiryVisited })}
                 </label>
                 <label>
                   <span>Full Name</span>
-                  <input className={this.inputClassNames("fullName")}
-                         name="fullName"
-                         ref="fullName"
-                         onChange={updateAndValidateFn}
-                         defaultValue={fields.fullName}
-                         placeholder="John Doe"
-                  />
+                  {inputDefault("fullName", {placeholder:"John Doe" })}
                   
                 </label>
                 <label>
                   <span>CV Code</span>
-                  <input className={this.inputClassNames("cvcode")}
-                         name="cvcode"
-                         ref="cvcode"
-                         onChange={updateAndValidateFn}
-                         placeholder="123" />
-                  {/*  KJB: we don't retain show any value on because it is sensitive
-                            ... unsure how this works
-                            ... seems like it would blank out all the time
-                            ... need to better understand
+                  {input("cvcode", {placeholder:"123" })}
+                  {/*  KJB: ORIGINALLY DID NOT HAVE A VALUE AT ALL
+                              ... as a result if you close and open it always starts out blank
+                              ... AI: seems like on every re-render it would blank out constantly
+                                      ... unless nothing changed in the dom, so React leaves it alone
+                              HOWEVER ... SEEMS to work the same way WITH value semantics
+                                      ... AND, credit card works the same way
+                                      ... AI: some one must be blanking them out
+                            FROM COURSE:
+                              ... we don't retain show any value on because it is sensitive
                   */}
                 </label>
               </div>
@@ -202,28 +239,30 @@ class Checkout extends MyReactComponent {
             </button>
           </form>
         </div>
-  
+        { this.displayErrors() }
       </div>
     );
   }
 
   displayErrors() {
-    const errors = this.state.error.details;
-    return (
-      <div className="errors">
-        { errors.map(x => (
-            <div className="error" key={x.message}>
-              { x.message }
-            </div>
-          )) }
-      </div>
-    );
+    if (this.checkoutSchema.isValid())
+      return null;
+    else
+      return <div className="errors">
+               { this.checkoutSchema.allProminentMsgs().map(msg => (
+                   <div className="error" key={msg}>
+                     { msg }
+                   </div>
+                 )) }
+             </div>;
   }
 
   inputClassNames(forField) {
-    const errors        = this.state.error ? this.state.error.details : [{path:""}];
-    const fieldHasError = errors.find( elm => elm.path === forField);
-    return fieldHasError && this.state.showErrors ? "inputError" : "";
+    return this.checkoutSchema.isFieldValid(forField) ?  "" : "inputError";
+  }
+
+  fieldMsgTitle(forField) {
+    return this.checkoutSchema.detailedFieldMsg(forField);
   }
 
 }
@@ -260,14 +299,6 @@ function formatExpiry(expiry) {
 function pad2(amt) {
   if (amt.length === 1) return '0'+amt;
   return amt;
-}
-
-// perform Joi validation
-function validate(fields) {
-  return Joi.validate(fields, CHECKOUT_SCHEMA, {
-    abortEarly: false, // give us all the errors at once (both for all fields and multiple errors per field)
-    kevinSaysPruneDupPaths: true, // only emit the first of potentially may errors per field (i.e. path)
-  });
 }
 
 export default Checkout;
