@@ -31,7 +31,7 @@ class Checkout extends MyReactComponent {
                     consolidatedMsg: "state is required (choose from the selection list)" },
       zip:        { joi: Joi.string().required().regex(/^\d{5}(-\d{4})?$/, 'ddddd[-dddd]'), 
                     consolidatedMsg: "zip is required: format: ddddd[-dddd]" },
-      email:      { joi: Joi.string().email().required(),
+      email:      { joi: Joi.string().required().email(),
                     consolidatedMsg: "Email is required and must be a valid email address" },
       creditCard: { joi: Joi.string().required().replace(/\s/g, '').creditCard(),
                     consolidatedMsg: "Credit Card Number is required and must be a card format" },
@@ -56,13 +56,14 @@ class Checkout extends MyReactComponent {
     const { validationState } = this.state;
 
     // update our internal representation of a field change, and perform validation
-    const fieldChanged = (e) => {
+    const fieldChanged = (e, programmaticChange=false) => {
       // perform our base update (supplied by the client of <Checkout>
       updatedFn(e);
 
       // inform our validation schema that this field has changed
       // ... stimulating deterministic validation
-      this.checkoutSchema.fieldHasChanged(e.target.name);
+      if (!programmaticChange)
+        this.checkoutSchema.fieldHasChanged(e.target.name);
 
       // validate our fields, reflecting errors in our GUI
       const updatedProps = // merge our current fields with this recent change
@@ -97,12 +98,10 @@ class Checkout extends MyReactComponent {
       this.checkoutSchema.fieldHasBeenVisited(e.target.name);
 
       // format our credit card
-      fieldChanged({
-        target: {
-          name:  e.target.name,
-          value: formatCreditCard(e.target.value)
-        }
-      });
+      fieldChanged({ target: {
+                       name:  e.target.name,
+                       value: formatCreditCard(e.target.value) }},
+                   true); // programmatic change (i.e. NOT user change)
     };
   
     // utility function to format our Expiry Date (when it looses focus)
@@ -112,12 +111,10 @@ class Checkout extends MyReactComponent {
       this.checkoutSchema.fieldHasBeenVisited(e.target.name);
 
       // format our expiry
-      fieldChanged({
-        target: {
-          name:  e.target.name,
-          value: formatExpiry(e.target.value)
-        }
-      });
+      fieldChanged({ target: {
+                       name:  e.target.name,
+                       value: formatExpiry(e.target.value) }},
+                   true); // programmatic change (i.e. NOT user change)
     };
 
     // our purchase button was clicked
