@@ -40,20 +40,22 @@ describe('Checkout Tests', function () {
   }
 
 
-  describe('item-row buy clicked', function () {
+  describe('item-row buy clicked and checkout', function () {
     beforeEach(function () {
       TestUtils.Simulate.click(renderedDomNode.querySelector('.catalog li[data-id="1"] button.buy'));
+      TestUtils.Simulate.click(renderedDomNode.querySelector('button.checkout'));
+    });
+
+    // KJB: do this first due to non beforeEach() setup, don't want buy button to be clicked twice
+    it('should have proper total', function () {
+      const formattedTotal = renderedDomNode.querySelector('.checkout .formattedTotal');
+      const expectedValue = formatMoney(DATA.items[0].price);
+      expect(formattedTotal.innerHTML).toBe(expectedValue);
     });
   
     it('should show checkout modal', function () {
       const modal = renderedDomNode.querySelector('.checkoutModal .checkout');
       expect(modal).toExist();
-    });
-  
-    it('should have proper total', function () {
-      const formattedTotal = renderedDomNode.querySelector('.checkout .formattedTotal');
-      const expectedValue = formatMoney(DATA.items[0].price);
-      expect(formattedTotal.innerHTML).toBe(expectedValue);
     });
 
     it('should not have errors displayed initially', function () {

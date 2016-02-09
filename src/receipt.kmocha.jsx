@@ -33,9 +33,10 @@ describe('receipt', function () {
     });
   }
 
-  describe('clicked on bar buy button from catalog', function () {
+  describe('clicked on bar buy button from catalog and checkout', function () {
     beforeEach(function () {
       Simulate.click(domNode.querySelector('li[data-id="2"] button.buy'));
+      Simulate.click(domNode.querySelector('button.checkout'));
     });
 
     describe('after entering all fields and clicking pay button', function () {
