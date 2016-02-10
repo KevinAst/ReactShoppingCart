@@ -7,6 +7,7 @@ import Joi       from 'joi-browser';
 import AlmondJoi from './almond-joi';
 import Select    from 'react-select';
 import USStates  from './USStates';
+import Esc from './util/esc';
 
 class Checkout extends MyReactComponent {
 
@@ -48,11 +49,11 @@ class Checkout extends MyReactComponent {
     // perform initial validation, once our initial rendering occurs
     this.setState({ validationState: this.checkoutSchema.validate(this.props.fields) });
 
-    this.props.regEscHandler(this.props.closeCheckoutFn); // ??? NEW
+    Esc.regEscHandler(this.props.closeCheckoutFn);
   }
 
   componentWillUnmount() {
-    this.props.unregEscHandler(this.props.closeCheckoutFn); // ??? NEW
+    Esc.unregEscHandler(this.props.closeCheckoutFn);
   }
 
   render() {

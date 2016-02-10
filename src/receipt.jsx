@@ -5,15 +5,16 @@ import MyReactComponent from './my-react-component';
 import ItemRow from './item-row';
 import { totalItems, unitPrice } from './util/money';
 import { formatMoney } from 'accounting';
+import Esc from './util/esc';
 
 class Receipt extends MyReactComponent {
 
   componentDidMount() {
-    this.props.regEscHandler(this.props.closeFn); // ??? NEW
+    Esc.regEscHandler(this.props.closeFn);
   }
 
   componentWillUnmount() {
-    this.props.unregEscHandler(this.props.closeFn); // ??? NEW
+    Esc.unregEscHandler(this.props.closeFn);
   }
 
   render() {

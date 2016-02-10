@@ -1,18 +1,20 @@
+'use strict';
+
 import React from 'react';
 import MyReactComponent from './my-react-component';
 import ItemRow from './item-row'; // KJB: hmmmm we re-use our ItemRow component
 import { formatMoney } from 'accounting';
 import { totalItems, unitPrice } from './util/money';
-
+import Esc from './util/esc';
 
 class Cart extends MyReactComponent {
 
   componentDidMount() {
-    this.props.regEscHandler(this.props.closeFn); // ??? NEW
+    Esc.regEscHandler(this.props.closeFn);
   }
 
   componentWillUnmount() {
-    this.props.unregEscHandler(this.props.closeFn); // ??? NEW
+    Esc.unregEscHandler(this.props.closeFn);
   }
 
   render() {
