@@ -36,7 +36,7 @@ class App extends MyReactComponent {
       // ***
 
       receiptId:    null,
-      receiptItems: [],   // of type cartItems (with qty)
+      receiptItems: [],   // type: cartItems (with qty)
 
 
       // ***
@@ -293,7 +293,7 @@ class App extends MyReactComponent {
   renderReceiptDialog () {
     return (
       <Receipt 
-          items={this.state.receiptItems}
+          cartItems={this.state.receiptItems}
           receiptId={this.state.receiptId}
           closeFn={this.closeReceiptDialog} />
     );
