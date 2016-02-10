@@ -11,6 +11,7 @@ import Cart             from './cart';
 import Checkout         from './checkout';
 import Receipt          from './receipt';
 import shortid          from 'shortid';
+import Esc              from './util/esc';
 
 class App extends MyReactComponent {
 
@@ -57,6 +58,17 @@ class App extends MyReactComponent {
       fullName:   "", // string
       cvcode:     "", // string
     };
+  }
+
+  componentDidMount() {
+    // register our master "keydown" event listener
+    // ... registered at document level, to monitor key events page wide
+    document.addEventListener('keydown', Esc.handleEscKey);
+  }
+
+  componentWillUnmount() {
+    // register our master "keydown" event listener
+    document.removeEventListener('keydown', Esc.handleEscKey);
   }
 
   render() {
@@ -280,7 +292,7 @@ class App extends MyReactComponent {
 
   renderReceiptDialog () {
     return (
-      <Receipt
+      <Receipt 
           items={this.state.receiptItems}
           receiptId={this.state.receiptId}
           closeFn={this.closeReceiptDialog} />
@@ -293,7 +305,6 @@ class App extends MyReactComponent {
       receiptItems: [],
     });
   }
-
 
 }
 
