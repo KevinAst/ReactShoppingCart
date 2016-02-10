@@ -11,6 +11,7 @@ import Cart             from './cart';
 import Checkout         from './checkout';
 import Receipt          from './receipt';
 import shortid          from 'shortid';
+import { ESC_KEY }      from './util/constants';
 
 class App extends MyReactComponent {
 
@@ -56,7 +57,25 @@ class App extends MyReactComponent {
       expiry:     "", // string
       fullName:   "", // string
       cvcode:     "", // string
+
+
+      // ***
+      // *** state related handlers
+      // ***
+
+      escKeyHandlers: [], // client handlers // ??? NEW
     };
+  }
+
+  componentDidMount() {
+    // register our master "keydown" event listener
+    // ... registered at document level, to monitor key events page wide
+    document.addEventListener('keydown', this.handleKeyDown); // ??? NEW
+  }
+
+  componentWillUnmount() {
+    // register our master "keydown" event listener
+    document.removeEventListener('keydown', this.handleKeyDown); // ??? NEW
   }
 
   render() {
@@ -127,7 +146,9 @@ class App extends MyReactComponent {
             changeQtyFn={this.changeQty}
             checkoutFn={total =>
               this.setState({checkoutOpen:true,  /* open checkout ... kinda new showCheckoutDialog() */
-                             total: total        /* with this total */}) } />
+                             total: total        /* with this total */}) }
+            regEscHandler={this.regEscHandler /* ??? NEW */}
+            unregEscHandler={this.unregEscHandler /* ??? NEW */} />
     );
   }
 
@@ -181,7 +202,9 @@ class App extends MyReactComponent {
                     updatedFn={this.updateCheckoutField}
                     total={total}
                     closeCheckoutFn={this.closeCheckoutDialog}
-                    saleCompletedFn={this.saleCompleted} />
+                    saleCompletedFn={this.saleCompleted}
+                    regEscHandler={this.regEscHandler /* ??? NEW */}
+                    unregEscHandler={this.unregEscHandler /* ??? NEW */} />
         </div>
       </div>
     );
@@ -280,10 +303,12 @@ class App extends MyReactComponent {
 
   renderReceiptDialog () {
     return (
-      <Receipt
+      <Receipt 
           items={this.state.receiptItems}
           receiptId={this.state.receiptId}
-          closeFn={this.closeReceiptDialog} />
+          closeFn={this.closeReceiptDialog} 
+          regEscHandler={this.regEscHandler /* ??? NEW */}
+          unregEscHandler={this.unregEscHandler /* ??? NEW */} />
     );
   }
 
@@ -292,6 +317,47 @@ class App extends MyReactComponent {
       receiptId:    null,
       receiptItems: [],
     });
+  }
+
+
+  // ***
+  // *** Handler related ... ??? NEW SECTION
+  // ***
+
+  // ??? why do we have to have these handlers in our state, and why do we regen our GUI?
+  // ??? very laborious ... we have to pass this around all over the place
+
+  regEscHandler(fn) {
+    this.setState({
+      escKeyHandlers: this.state.escKeyHandlers.concat(fn)
+    });
+  }
+
+  unregEscHandler(fn) {
+    this.setState({
+      escKeyHandlers: this.state.escKeyHandlers.filter(x => x !== fn)
+    });
+  }
+
+  // our master "keydown" event listener
+  handleKeyDown(e) {
+
+    // no-op if key is NOT escape
+    // ??? tight coupling with ESC ... handler name should be ESC related
+    if (e.keyCode !== ESC_KEY)
+      return;
+
+    // process most recent ESC handler (if any)
+    // ... and unregister it
+    //     ??? hmmm ... has a tight coupling with what it is doing
+    //              ... assumes it's operation is a single one only
+    const { escKeyHandlers } = this.state;
+    if (escKeyHandlers.length) {
+      e.preventDefault(); // stop event bubbling
+      const mostRecentHandler = escKeyHandlers[escKeyHandlers.length - 1];
+      mostRecentHandler(e);
+      // this.unregEscHandler(mostRecentHandler); // ??? can wait for this at componentWillUnmount
+    }
   }
 
 

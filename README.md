@@ -23,6 +23,7 @@ and receipt, retrieving data from simulated rest service.
 - kjb-app-joi-wrapper: Utilize value-added Joi Wrapper to meet app-specific requrements
 - 280-cart-test-state: Add a shopping cart
 - 300-receipt-details: Provide detailed receipt (and move receiptId to phantom Axios service)
+- 310-handle-esc: Escape key dismisses modal dialogs
 
 ## Jeff's Notes:
 

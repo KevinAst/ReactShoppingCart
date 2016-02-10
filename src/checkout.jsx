@@ -47,6 +47,12 @@ class Checkout extends MyReactComponent {
   componentDidMount() {
     // perform initial validation, once our initial rendering occurs
     this.setState({ validationState: this.checkoutSchema.validate(this.props.fields) });
+
+    this.props.regEscHandler(this.props.closeCheckoutFn); // ??? NEW
+  }
+
+  componentWillUnmount() {
+    this.props.unregEscHandler(this.props.closeCheckoutFn); // ??? NEW
   }
 
   render() {
