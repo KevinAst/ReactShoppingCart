@@ -22,6 +22,7 @@ and receipt, retrieving data from simulated rest service.
 - 277-red-fields-challenge: add red border around fields that are invalid
 - kjb-app-joi-wrapper: Utilize value-added Joi Wrapper to meet app-specific requrements
 - 280-cart-test-state: Add a shopping cart
+- 300-receipt-details: Provide detailed receipt (and move receiptId to phantom Axios service)
 
 ## Jeff's Notes:
 

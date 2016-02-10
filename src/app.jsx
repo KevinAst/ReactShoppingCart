@@ -10,6 +10,7 @@ import Catalog          from './catalog';
 import Cart             from './cart';
 import Checkout         from './checkout';
 import Receipt          from './receipt';
+import shortid          from 'shortid';
 
 class App extends MyReactComponent {
 
@@ -28,6 +29,15 @@ class App extends MyReactComponent {
       cartOpen: false,
       cartItems: [],
 
+
+      // ***
+      // *** state related to receipt
+      // ***
+
+      receiptId:    null,
+      receiptItems: [],   // of type cartItems (with qty)
+
+
       // ***
       // *** state related to checkout
       // ***
@@ -35,11 +45,7 @@ class App extends MyReactComponent {
       checkoutOpen: false, // is the checkout dialog open?
       total:        null,  // currency KJB: unsure yet how this is going to work
 
-      receiptId:    null,
-
-      // fields supporting our checkout
-      // ... attr names must match <Checkout> form field names
-      // KJB: Can state have depth in it's structure, rather than this flat list of field?
+      // NOTE: fields within our checkeout MUST match <Checkout> form field names
       addr1:      "", // string
       addr2:      "", // string
       city:       "", // string
@@ -58,8 +64,8 @@ class App extends MyReactComponent {
     const { itemExpanded, cartOpen, category, checkoutOpen, receiptId } = this.state;
 
     const filteredItems = category ?
-                            items.filter(x => x.category === category) :
-                            items;
+                          items.filter(x => x.category === category) :
+                          items;
     return (
       <div>
         { cartOpen && this.renderCartDialog() }
@@ -229,13 +235,39 @@ class App extends MyReactComponent {
     });
   }
 
-  saleCompleted(receiptId) {
+  saleCompleted() {
+
+    // Example of submitting to server ...
+    // ... NOTE: we send server item ids and total, let it verify total again
+    //           if anything is wrong return error
+    // const postData = {
+    //   itemIds:       this.state.cartItems.map(x => x.id), // list of items to purchase
+    //   expectedTotal: this.state.total,      // show total we are expecting (shown to user)
+    //   receiptId:     receiptId,             // we could supply the receipt id, or the server could gen (either approach is viable)
+    //   email:         this.state.email,      // checkout form data for purchase
+    //   creditCard:    this.state.creditCard,
+    //   expiry:        this.state.expiry,
+    //   fullName:      this.state.fullName,
+    //   cvcode:        this.state.cvcode
+    // };
+    // 
+    // axios.post(url, postData)
+    //   .then(response => { // on successsuccess
+    //     // setState here (see below)
+    //   })
+    //   .catch(response => {
+    //     // handle error
+    //   });
+
+    // since we don't have a service, gen our reciptId, and change our state
+    const receiptId = shortid.generate();
     this.setState({
       cartItems:    [],        // clear our shopping cart
       cartOpen:     false,     // close our shopping cart
       total:        null,
       checkoutOpen: false,     // close our buy/checkout dialog
       receiptId:    receiptId,
+      receiptItems: this.state.cartItems,
       creditCard:   null,      // clear sensitive state
       cvcode:       null,      // clear sensitive state
     });
@@ -249,6 +281,7 @@ class App extends MyReactComponent {
   renderReceiptDialog () {
     return (
       <Receipt
+          items={this.state.receiptItems}
           receiptId={this.state.receiptId}
           closeFn={this.closeReceiptDialog} />
     );
@@ -256,7 +289,8 @@ class App extends MyReactComponent {
 
   closeReceiptDialog() {
     this.setState({ 
-      receiptId:    null
+      receiptId:    null,
+      receiptItems: [],
     });
   }
 

@@ -5,7 +5,6 @@ import MyReactComponent from './my-react-component';
 import { formatMoney }  from 'accounting';
 import Joi       from 'joi-browser';
 import AlmondJoi from './almond-joi';
-import shortid   from 'shortid';
 import Select    from 'react-select';
 import USStates  from './USStates';
 
@@ -130,13 +129,7 @@ class Checkout extends MyReactComponent {
                     () => { // callback of setState() to be executed once state has been applied and rendered
 
                       if (this.checkoutSchema.isValid()) {
-                        // we can now submit to server and if successful transition
-                        // to receipt
-                        // be sure to send server item ids and total, let it verify total
-                        // again, if anything is wrong return error
-                        // TODO post to server
-                        const receiptId = shortid.generate(); // TODO eventually from server
-                        saleCompletedFn(receiptId);
+                        saleCompletedFn();
                       }
                       else {
                         // give focus to first invalid field

@@ -3,6 +3,8 @@
 import { expect, React, ReactDOM, TestUtils } from './util/karma-setup';
 const { renderIntoDocument, Simulate } = TestUtils;
 import App from './app';
+import { formatMoney } from 'accounting';
+import { unitPrice } from './util/money';
 
 const DATA = require('../public/fake-api.json');
 
@@ -58,6 +60,28 @@ describe('receipt', function () {
       it('should show receipt', function () {
         const modal = domNode.querySelector('.modal.receipt');
         expect(modal).toExist();
+      });
+
+      it('should have 1 line item', function () {
+        const arrLineItems = domNode.querySelectorAll('.receipt li');
+        expect(arrLineItems.length).toBe(1);
+      });
+
+      it('should have a line item qty of 1', function () {
+        const qty = domNode.querySelector('.receipt li[data-id="2"] .qtyValue');
+        expect(qty.innerHTML).toBe('1');
+      });
+
+      it('should have a line item total', function () {
+        const lineTotal = domNode.querySelector('.receipt li[data-id="2"] .lineTotal');
+        const expectedTotal = formatMoney(unitPrice(DATA.items[1].price, 1));
+        expect(lineTotal.innerHTML).toBe(expectedTotal);
+      });
+
+      it('should have a grand total', function () {
+        const total = domNode.querySelector('.receipt .formattedTotal');
+        const expectedTotal = formatMoney(unitPrice(DATA.items[1].price, 1));
+        expect(total.innerHTML).toBe(expectedTotal);
       });
 
       describe('clicking close', function () {
