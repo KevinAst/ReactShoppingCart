@@ -24,6 +24,7 @@ and receipt, retrieving data from simulated rest service.
 - 280-cart-test-state: Add a shopping cart
 - 300-receipt-details: Provide detailed receipt (and move receiptId to phantom Axios service)
 - 310-handle-esc: Escape key dismisses modal dialogs
+- kjb-cart-items-cleanup: cleanup all appropriate code to use CartItem nomenclature
 
 ## Jeff's Notes:
 

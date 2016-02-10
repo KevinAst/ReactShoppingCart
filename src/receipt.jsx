@@ -18,7 +18,7 @@ class Receipt extends MyReactComponent {
   }
 
   render() {
-    const { items, receiptId, closeFn } = this.props;
+    const { cartItems, receiptId, closeFn } = this.props;
 
     return (
       <div className="modal receipt">
@@ -28,19 +28,19 @@ class Receipt extends MyReactComponent {
           Receipt#: <span className="receiptId">{ receiptId }</span>
         </div>
         <ul>
-          { items.map(item =>
-            <ItemRow key={item.id}
-                     item={item} >
+          { cartItems.map(cartItem =>
+            <ItemRow key={cartItem.id}
+                     item={cartItem} >
               <span className="qty">Quantity:
-                <span className="qtyValue">{ item.qty }</span>
+                <span className="qtyValue">{ cartItem.qty }</span>
               </span>
               <span className="lineTotal">
-                { formatMoney(unitPrice(item.price, item.qty)) }
+                { formatMoney(unitPrice(cartItem.price, cartItem.qty)) }
               </span>
             </ItemRow> ) }
         </ul>
         <div className="total">Total:
-          <span className="formattedTotal">{ formatMoney(totalItems(items)) }</span>
+          <span className="formattedTotal">{ formatMoney(totalItems(cartItems)) }</span>
         </div>
       </div>
     );
