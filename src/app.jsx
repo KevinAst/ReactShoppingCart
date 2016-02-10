@@ -29,6 +29,15 @@ class App extends MyReactComponent {
       cartOpen: false,
       cartItems: [],
 
+
+      // ***
+      // *** state related to receipt
+      // ***
+
+      receiptId:    null,
+      receiptItems: [],   // of type cartItems (with qty)
+
+
       // ***
       // *** state related to checkout
       // ***
@@ -36,11 +45,7 @@ class App extends MyReactComponent {
       checkoutOpen: false, // is the checkout dialog open?
       total:        null,  // currency KJB: unsure yet how this is going to work
 
-      receiptId:    null,
-
-      // fields supporting our checkout
-      // ... attr names must match <Checkout> form field names
-      // KJB: Can state have depth in it's structure, rather than this flat list of field?
+      // NOTE: fields within our checkeout MUST match <Checkout> form field names
       addr1:      "", // string
       addr2:      "", // string
       city:       "", // string
@@ -262,6 +267,7 @@ class App extends MyReactComponent {
       total:        null,
       checkoutOpen: false,     // close our buy/checkout dialog
       receiptId:    receiptId,
+      receiptItems: this.state.cartItems,
       creditCard:   null,      // clear sensitive state
       cvcode:       null,      // clear sensitive state
     });
@@ -275,6 +281,7 @@ class App extends MyReactComponent {
   renderReceiptDialog () {
     return (
       <Receipt
+          items={this.state.receiptItems}
           receiptId={this.state.receiptId}
           closeFn={this.closeReceiptDialog} />
     );
@@ -282,7 +289,8 @@ class App extends MyReactComponent {
 
   closeReceiptDialog() {
     this.setState({ 
-      receiptId:    null
+      receiptId:    null,
+      receiptItems: [],
     });
   }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import ItemRow from './item-row'; // KJB: hmmmm we re-use our ItemRow component
 import { formatMoney } from 'accounting';
-import { totalCartItems, unitPrice } from './util/money';
+import { totalItems, unitPrice } from './util/money';
 
 function Cart({ cartItems, closeFn, checkoutFn, removeItemFn, changeQtyFn }) {
   return (
@@ -11,8 +11,8 @@ function Cart({ cartItems, closeFn, checkoutFn, removeItemFn, changeQtyFn }) {
               onClick={closeFn}>Continue shopping</button>
 
       <button className="checkout"
-              onClick={e => checkoutFn(totalCartItems(cartItems), e)}
-              disabled={totalCartItems(cartItems) <= 0}>Checkout</button>
+              onClick={e => checkoutFn(totalItems(cartItems), e)}
+              disabled={totalItems(cartItems) <= 0}>Checkout</button>
 
       <h1>Cart</h1>
       <ul>
@@ -34,7 +34,7 @@ function Cart({ cartItems, closeFn, checkoutFn, removeItemFn, changeQtyFn }) {
           </ItemRow> ) }
       </ul>
       <div className="total">Total:
-        <span className="formattedTotal">{ formatMoney(totalCartItems(cartItems)) }</span>
+        <span className="formattedTotal">{ formatMoney(totalItems(cartItems)) }</span>
       </div>
     </div>
   );
