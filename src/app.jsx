@@ -10,6 +10,7 @@ import Catalog          from './catalog';
 import Cart             from './cart';
 import Checkout         from './checkout';
 import Receipt          from './receipt';
+import shortid          from 'shortid';
 
 class App extends MyReactComponent {
 
@@ -58,8 +59,8 @@ class App extends MyReactComponent {
     const { itemExpanded, cartOpen, category, checkoutOpen, receiptId } = this.state;
 
     const filteredItems = category ?
-                            items.filter(x => x.category === category) :
-                            items;
+                          items.filter(x => x.category === category) :
+                          items;
     return (
       <div>
         { cartOpen && this.renderCartDialog() }
@@ -229,7 +230,32 @@ class App extends MyReactComponent {
     });
   }
 
-  saleCompleted(receiptId) {
+  saleCompleted() {
+
+    // Example of submitting to server ...
+    // ... NOTE: we send server item ids and total, let it verify total again
+    //           if anything is wrong return error
+    // const postData = {
+    //   itemIds:       this.state.cartItems.map(x => x.id), // list of items to purchase
+    //   expectedTotal: this.state.total,      // show total we are expecting (shown to user)
+    //   receiptId:     receiptId,             // we could supply the receipt id, or the server could gen (either approach is viable)
+    //   email:         this.state.email,      // checkout form data for purchase
+    //   creditCard:    this.state.creditCard,
+    //   expiry:        this.state.expiry,
+    //   fullName:      this.state.fullName,
+    //   cvcode:        this.state.cvcode
+    // };
+    // 
+    // axios.post(url, postData)
+    //   .then(response => { // on successsuccess
+    //     // setState here (see below)
+    //   })
+    //   .catch(response => {
+    //     // handle error
+    //   });
+
+    // since we don't have a service, gen our reciptId, and change our state
+    const receiptId = shortid.generate();
     this.setState({
       cartItems:    [],        // clear our shopping cart
       cartOpen:     false,     // close our shopping cart
