@@ -32,27 +32,27 @@ class Cart extends MyReactComponent {
     
         <h1>Cart</h1>
         <ul>
-          { cartItems.map(item =>
-            <ItemRow key={item.id}
-                     item={item} >
+          { cartItems.map(cartItem =>
+            <ItemRow key={cartItem.id}
+                     item={cartItem} >
               <span className="qty">
                 Quantity:
                 <input name="qty"
-                       value={item.qty}
-                       onChange={e => changeQtyFn(item, parseInt(e.target.value, 10) || 0)} />
+                       value={cartItem.qty}
+                       onChange={e => changeQtyFn(cartItem, parseInt(e.target.value, 10) || 0)} />
 
-                <img src="/assets/plus_minus_btn.gif" useMap="#plus_minus_map"/>
-                <map name="plus_minus_map">
-                  <area shape="rect" coords="0,0,15,15"  onClick={e => {if (item.qty>0) changeQtyFn(item, item.qty-1)}}/>
-                  <area shape="rect" coords="0,16,15,30" onClick={e => changeQtyFn(item, item.qty+1)}/>
+                <img src="/assets/plus_minus_btn.gif" useMap={`#plus_minus_map_${cartItem.id}`}/>
+                <map name={`plus_minus_map_${cartItem.id}`}>
+                  <area shape="rect" coords="0,0,15,15" onClick={e => changeQtyFn(cartItem, cartItem.qty+1)}/>
+                  <area shape="rect" coords="0,16,15,30"  onClick={e => {if (cartItem.qty>0) changeQtyFn(cartItem, cartItem.qty-1)}}/>
                 </map>
 
               </span>
     
-              <button className="remove" onClick={e => removeItemFn(item, e)} >Remove</button>
+              <button className="remove" onClick={e => removeItemFn(cartItem, e)} >Remove</button>
     
               <span className="lineTotal">
-                { formatMoney(unitPrice(item.price, item.qty)) }
+                { formatMoney(unitPrice(cartItem.price, cartItem.qty)) }
               </span>
             </ItemRow> ) }
         </ul>
