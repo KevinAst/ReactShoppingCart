@@ -40,13 +40,21 @@ class Cart extends MyReactComponent {
                 <input name="qty"
                        value={cartItem.qty}
                        onChange={e => changeQtyFn(cartItem, parseInt(e.target.value, 10) || 0)} />
+              </span>
 
-                <img src="/assets/plus_minus_btn.gif" useMap={`#plus_minus_map_${cartItem.id}`}/>
-                <map name={`plus_minus_map_${cartItem.id}`}>
-                  <area shape="rect" coords="0,0,15,15" onClick={e => changeQtyFn(cartItem, cartItem.qty+1)}/>
-                  <area shape="rect" coords="0,16,15,30"  onClick={e => {if (cartItem.qty>0) changeQtyFn(cartItem, cartItem.qty-1)}}/>
-                </map>
-
+              <span style={{display:       "inline-flex",
+                            flexWrap:      "wrap",
+                            flexDirection: "column",
+                            alignSelf:     "center",
+                            fontSize:      '75%',
+                            fontWeight:    'bold',
+                            cursor:        'pointer'}}>
+                <i className="fa fa-angle-double-up"
+                   title="increase quantity"
+                   onClick={e => changeQtyFn(cartItem, cartItem.qty+1)}></i>
+                <i className="fa fa-angle-double-down"
+                   title="decrease quantity"
+                   onClick={e => {if (cartItem.qty>0) changeQtyFn(cartItem, cartItem.qty-1)}}></i>
               </span>
     
               <button className="remove" onClick={e => removeItemFn(cartItem, e)} >Remove</button>
