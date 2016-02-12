@@ -43,9 +43,7 @@ class Cart extends MyReactComponent {
               </span>
 
               <span style={{display:       "inline-flex",
-                            flexWrap:      "wrap",
                             flexDirection: "column",
-                            alignSelf:     "center",
                             fontSize:      '75%',
                             fontWeight:    'bold',
                             cursor:        'pointer'}}>
