@@ -50,7 +50,7 @@ class App extends MyReactComponent {
       addr1:      "", // string
       addr2:      "", // string
       city:       "", // string
-      state:      "IN", // string TODO: we initialize our state strictly to accomidate our unit test ... Can't get TestUtils.Simulate.change() to work with react-select component
+      state:      "", // string
       zip:        "", // string
       email:      "", // string
       creditCard: "", // string

@@ -183,7 +183,7 @@ class Checkout extends MyReactComponent {
                 {inputDefault("addr2", {placeholder:"address line 2", })}
                 {inputDefault("city",  {placeholder:"city", })}
                 <Select name="state" ref="state"
-                        className={this.inputClassNames("state")}
+                        className={"state "+this.inputClassNames("state")}
                         title={this.fieldMsgTitle("state")} 
                         value={fields.state} options={USStates} 
                         onChange={ (selVal) => { fieldChanged({ target: {name: "state", value: selVal} }) }}

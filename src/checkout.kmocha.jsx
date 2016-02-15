@@ -24,9 +24,12 @@ describe('Checkout Tests', function () {
 
     // KJB: kool - provides a DOM mapping of all our input fields
     //      ... ex: inputDomMap.email is the dom input for email
-    const inputDomMap = fieldNames.reduce((acc, name) => {
-      acc[name] = renderedDomNode.querySelector(`.checkout input[name="${name}"]`);
-      return acc;
+    const inputDomMap = fieldNames.reduce((accum, name) => {
+      if (name === "state") // for state (a React Select component) we must drill into the correct input
+        accum[name] = renderedDomNode.querySelector('.checkout div.state .Select-input input');
+      else
+        accum[name] = renderedDomNode.querySelector(`.checkout input[name="${name}"]`);
+      return accum;
     }, {});
 
     // KJB: for each item passed in (ex: data.email), use it's value to update the GUI
@@ -34,8 +37,10 @@ describe('Checkout Tests', function () {
       const v = data[k];
 
       // KJB: kool - simulate change in our input dom
-      // TODO: for k==="state", figure out how TestUtils.Simulate.change() works with react-select component, THEN un-initialize this.state.state in app.jsx
       TestUtils.Simulate.change(inputDomMap[k], { target: { name: k, value: v }});
+      if (k==="state") { // for state (a React Select component) we must PRESS ENTER to ACCEPT value
+		    TestUtils.Simulate.keyDown(inputDomMap[k], { keyCode: 13, key: 'Enter' });
+      }
     });
   }
 
@@ -69,9 +74,9 @@ describe('Checkout Tests', function () {
         TestUtils.Simulate.click(renderedDomNode.querySelector('button.pay'));
       });
 
-      it('should show 8 errors', function () {
+      it('should show 9 errors', function () {
         const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-        expect(errorDivs.length).toBe(8);
+        expect(errorDivs.length).toBe(9);
       });
 
       describe('after entering email', function () {
@@ -80,9 +85,9 @@ describe('Checkout Tests', function () {
           TestUtils.Simulate.change(email, { target: { name: 'email', value: 'a@b.com' }});
         });
 
-        it('should have 7 errors', function () {
+        it('should have 8 errors', function () {
           const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-          expect(errorDivs.length).toBe(7);
+          expect(errorDivs.length).toBe(8);
         });
 
       });
@@ -97,9 +102,9 @@ describe('Checkout Tests', function () {
           });
         });
 
-        it('should have 5 errors', function () {
+        it('should have 6 errors', function () {
           const errorDivs = renderedDomNode.querySelectorAll('.checkout .error');
-          expect(errorDivs.length).toBe(5);
+          expect(errorDivs.length).toBe(6);
         });
       });
 
@@ -108,7 +113,7 @@ describe('Checkout Tests', function () {
           enterData({
             addr1: '3005 Williams Ct.',
             city:  'Kokomo',
-            state: 'IN',
+            state: 'IL',
             zip:   '54321',
             email: 'a@b.com',
             creditCard: '4111111111111111',
@@ -120,6 +125,8 @@ describe('Checkout Tests', function () {
 
         it('should NOT have errors', function () {
           const errors = renderedDomNode.querySelector('.checkout .errors');
+          if (errors) // definitively shows which field was in error
+            console.error("UNEXPECTED ERRORS: ", errors);
           expect(errors).toNotExist();
         });
       });

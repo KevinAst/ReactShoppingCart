@@ -25,13 +25,19 @@ describe('receipt', function () {
 
   function enterData(data) {
     const fieldNames = ['addr1', 'addr2', 'city', 'state', 'zip', 'email', 'creditCard', 'expiry', 'fullName', 'cvcode'];
-    const inputMap = fieldNames.reduce((acc, name) => {
-      acc[name] = domNode.querySelector(`.checkout input[name="${name}"]`);
-      return acc;
+    const inputMap = fieldNames.reduce((accum, name) => {
+      if (name === "state") // for state (a React Select component) we must drill into the correct input
+        accum[name] = domNode.querySelector('.checkout div.state .Select-input input');
+      else
+        accum[name] = domNode.querySelector(`.checkout input[name="${name}"]`);
+      return accum;
     }, {});
     Object.keys(data).forEach(k => {
       const v = data[k];
       Simulate.change(inputMap[k], { target: { name: k, value: v }});
+      if (k==="state") { // for state (a React Select component) we must PRESS ENTER to ACCEPT value
+		    TestUtils.Simulate.keyDown(inputMap[k], { keyCode: 13, key: 'Enter' });
+      }
     });
   }
 
