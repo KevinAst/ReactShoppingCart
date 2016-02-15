@@ -4,7 +4,7 @@ import React     from 'react';
 import MyReactComponent from './my-react-component';
 import { formatMoney }  from 'accounting';
 import Joi       from 'joi-browser';
-import AlmondJoi from './almond-joi';
+import AlmondJoi from './util/almond-joi';
 import Select    from 'react-select';
 import USStates  from './USStates';
 import Esc from './util/esc';
